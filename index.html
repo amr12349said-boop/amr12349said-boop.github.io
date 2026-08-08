@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مفردات — الكلمات في حياتنا</title>
+<style>
+  :root {
+    --bg1: #f6f5ff;
+    --bg2: #fff1f7;
+    --card: #ffffff;
+    --ink: #231b3f;
+    --muted: #7a7298;
+    --primary: #7c5cfc;
+    --accent: #f472b6;
+    --line: #efeaf7;
+    --soft: #f1eeff;
+    --shadow: rgba(94, 73, 214, .12);
+  }
+
+  body.dark {
+    --bg1: #0d0b1e;
+    --bg2: #191031;
+    --card: #1d1836;
+    --ink: #ece9ff;
+    --muted: #a29ec2;
+    --primary: #a78bfa;
+    --accent: #f9a8d4;
+    --line: #2c2550;
+    --soft: #2a2250;
+    --shadow: rgba(0, 0, 0, .45);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  [hidden] { display: none !important; }
+
+  /* ---------- شاشة الترحيب ---------- */
+  .welcome {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #1a1145 0%, #3b2470 40%, #7c3aed 75%, #ec4899 100%);
+    overflow: hidden;
+    transition: opacity .8s ease, visibility .8s ease;
+  }
+
+  .welcome.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .welcome .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .55;
+    animation: blobFloat 10s ease-in-out infinite alternate;
+  }
+  .welcome .blob.b1 { width: 320px; height: 320px; background: #22d3ee; top: -60px; right: -60px; }
+  .welcome .blob.b2 { width: 280px; height: 280px; background: #f472b6; bottom: -50px; left: -50px; animation-delay: -3s; }
+  .welcome .blob.b3 { width: 200px; height: 200px; background: #fbbf24; top: 55%; left: 15%; animation-delay: -6s; }
+
+  @keyframes blobFloat {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(40px, -30px) scale(1.2); }
+  }
+
+  .welcome .logo {
+    font-size: 3.4rem;
+    animation: popIn .7s ease both;
+  }
+
+  .welcome h2 {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    color: #fff;
+    margin-top: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #fff, #fde68a, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: riseIn .8s .15s ease both;
+  }
+
+  .welcome .subtitle {
+    color: #e9d5ff;
+    font-size: 1.15rem;
+    margin-top: 14px;
+    animation: riseIn .8s .3s ease both;
+  }
+
+  .welcome .features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+
+  .welcome .feature {
+    background: rgba(255, 255, 255, .14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, .25);
+    padding: 10px 18px;
+    border-radius: 999px;
+    color: #fff;
+    font-size: .92rem;
+    font-weight: 600;
+    animation: riseIn .8s ease both;
+  }
+  .welcome .feature:nth-child(1) { animation-delay: .45s; }
+  .welcome .feature:nth-child(2) { animation-delay: .55s; }
+  .welcome .feature:nth-child(3) { animation-delay: .65s; }
+  .welcome .feature:nth-child(4) { animation-delay: .75s; }
+
+  .welcome .start-btn {
+    margin-top: 38px;
+    border: none;
+    cursor: pointer;
+    padding: 16px 48px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #4c1d95;
+    background: linear-gradient(90deg, #fde68a, #f472b6);
+    border-radius: 999px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
+    animation: riseIn .8s .85s ease both, pulse 2.2s 1.6s ease-in-out infinite;
+    transition: transform .2s;
+  }
+  .welcome .start-btn:hover { transform: scale(1.06); }
+  .welcome .start-btn:active { transform: scale(.95); }
+
+  /* الصورة الشخصية الدائرية */
+  .avatar-wrap { animation: riseIn .8s .1s ease both; }
+
+  .avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .16);
+    border: 4px solid #fff;
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, .25), 0 14px 40px rgba(0, 0, 0, .35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+    transition: transform .2s;
+  }
+  .avatar:hover { transform: scale(1.05); }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .avatar .cam {
+    font-size: 2.2rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .4);
+  }
+
+  .welcome .greet {
+    color: #fff;
+    font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+    font-weight: 800;
+    margin-top: 20px;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, .3);
+    animation: riseIn .8s .2s ease both;
+    min-height: 3rem;
+  }
+
+  .name-box {
+    margin-top: 14px;
+    animation: riseIn .8s .3s ease both;
+  }
+
+  .name-box input {
+    width: min(320px, 80vw);
+    padding: 13px 20px;
+    border: 2px solid rgba(255, 255, 255, .4);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .name-box input::placeholder { color: rgba(255, 255, 255, .7); }
+  .name-box input:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .2);
+  }
+
+  .quote {
+    margin-top: 26px;
+    padding: 18px 26px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, .25);
+    max-width: 620px;
+    animation: riseIn .8s .45s ease both;
+  }
+
+  .quote .q-ar {
+    color: #fff;
+    font-size: 1.12rem;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+  .quote .q-en {
+    color: #e9d5ff;
+    font-size: .95rem;
+    font-style: italic;
+    margin-top: 8px;
+    direction: ltr;
+    text-align: center;
+  }
+  .quote cite {
+    display: block;
+    color: #fde68a;
+    font-size: .8rem;
+    margin-top: 10px;
+    font-style: normal;
+  }
+
+  .welcome .hint {
+    color: #c4b5fd;
+    font-size: .8rem;
+    margin-top: 16px;
+    animation: riseIn .8s 1s ease both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  @keyframes riseIn {
+    from { transform: translateY(28px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 12px 30px rgba(0, 0, 0, .3); }
+    50% { box-shadow: 0 12px 42px rgba(251, 191, 36, .5); }
+  }
+
+  body {
+    font-family: "Segoe UI", "Tahoma", Arial, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 26px 16px 40px;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    transition: background .4s ease, color .3s ease;
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 50;
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 6px 18px var(--shadow);
+    transition: transform .2s;
+  }
+  .theme-toggle:hover { transform: rotate(15deg) scale(1.08); }
+
+  header { text-align: center; margin-bottom: 22px; }
+
+  header h1 {
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p { color: var(--muted); margin-top: 8px; font-size: .95rem; }
+
+  .controls {
+    max-width: 720px;
+    margin: 18px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-box { width: 100%; max-width: 460px; position: relative; }
+
+  .search-box input {
+    width: 100%;
+    padding: 14px 20px;
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    font-size: 1rem;
+    outline: none;
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: 0 6px 16px var(--shadow);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search-box input::placeholder { color: var(--muted); }
+  .search-box input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
+  }
+
+  .speed-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    max-width: 94vw;
+    background: var(--card);
+    padding: 10px;
+    border-radius: 22px;
+    border: 2px solid var(--line);
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+
+  .speed-control span { font-size: .9rem; color: var(--muted); padding-inline-end: 6px; }
+
+  .speed-btn {
+    border: none;
+    background: transparent;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s, color .2s, transform .15s;
+  }
+  .speed-btn:hover { background: var(--soft); }
+  .speed-btn.active {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    color: #fff;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  .speed-btn:active { transform: scale(.95); }
+
+  .voice-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    max-width: 94vw;
+    background: var(--card);
+    padding: 8px 14px;
+    border-radius: 22px;
+    border: 2px solid var(--line);
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+
+  .voice-control span { font-size: .9rem; color: var(--muted); white-space: nowrap; }
+
+  .voice-control select {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 999px;
+    max-width: 100%;
+    flex: 1;
+    min-width: 160px;
+  }
+  .voice-control select option { background: var(--card); color: var(--ink); }
+
+  .count { text-align: center; margin: 22px 0 0; font-size: .9rem; color: var(--muted); }
+
+  .progress {
+    max-width: 460px;
+    margin: 26px auto 0;
+    padding: 18px 22px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 8px 22px var(--shadow);
+  }
+
+  .progress .bar {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--soft);
+    overflow: hidden;
+  }
+
+  .progress .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width .4s ease;
+  }
+
+  .progress .labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .progress .labels .rem {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: .85rem;
+  }
+
+  .learned-btn {
+    margin-top: 2px;
+    border: 2px solid var(--line);
+    background: var(--soft);
+    color: var(--ink);
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: .78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .learned-btn:hover { border-color: var(--primary); }
+  .learned-btn.checked {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .35);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 12px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .card {
+    --i: 0;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 22px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    position: relative;
+    overflow: hidden;
+    animation: cardIn .5s ease both;
+    animation-delay: calc(var(--i) * 45ms);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+
+  @keyframes cardIn {
+    from { transform: translateY(22px) scale(.95); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: height .25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 36px var(--shadow);
+    border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  }
+  .card:hover::before { height: 8px; }
+
+  .card .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* وضع الاختبار: إخفاء الإنجليزية */
+  body.study-mode .card .english,
+  body.study-mode .card .pronounce,
+  body.study-mode .card .speak-btn {
+    display: none;
+  }
+
+  body.study-mode .card { cursor: pointer; }
+
+  body.study-mode .card.revealed .english,
+  body.study-mode .card.revealed .pronounce,
+  body.study-mode .card.revealed .speak-btn {
+    display: flex;
+  }
+  body.study-mode .card.revealed .pronounce { display: block; }
+
+  body.study-mode .card.revealed {
+    border-color: var(--primary);
+    box-shadow: 0 10px 26px var(--shadow);
+  }
+
+  .card .english {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: var(--ink);
+    direction: ltr;
+    text-align: left;
+    line-height: 1.25;
+  }
+
+  .speak-btn {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--primary);
+    font-size: .9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, color .2s, transform .15s;
+  }
+  .speak-btn:hover { background: var(--primary); color: #fff; }
+  .speak-btn:active { transform: scale(.88); }
+
+  .pronounce { font-size: .82rem; color: var(--muted); text-align: right; }
+  .pronounce b { color: var(--ink); font-weight: 600; }
+
+  .divider { height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--primary), var(--accent), transparent); }
+
+  .arabic { font-size: 1rem; font-weight: 600; line-height: 1.5; }
+
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--muted);
+    font-size: .85rem;
+  }
+
+  /* ---------- زر الاختبار ---------- */
+  .test-open-btn {
+    display: block;
+    margin: 26px auto 0;
+    border: none;
+    cursor: pointer;
+    padding: 14px 40px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+    box-shadow: 0 10px 26px var(--shadow);
+    transition: transform .2s;
+  }
+  .test-open-btn:hover { transform: scale(1.05); }
+  .test-open-btn:active { transform: scale(.95); }
+
+  .test-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 22px;
+  }
+
+  .test-btns .test-open-btn { margin-top: 0; }
+
+  .study-btn {
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    padding: 14px 34px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .study-btn:hover { transform: scale(1.05); }
+  .study-btn.on {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 10px 26px var(--shadow);
+  }
+
+  /* ---------- شاشة الاختبار ---------- */
+  .test-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(15, 10, 40, .55);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .test-overlay[hidden] { display: none; }
+
+  .test-card {
+    width: min(560px, 94vw);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .3);
+    animation: popIn .35s ease both;
+  }
+
+  .test-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .test-title { font-size: 1.25rem; font-weight: 800; }
+
+  .test-close {
+    border: none;
+    background: var(--soft);
+    color: var(--ink);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .test-close:hover { background: #fee2e2; color: #dc2626; }
+
+  .test-progress { margin-top: 18px; }
+
+  .test-bar {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--soft);
+    overflow: hidden;
+  }
+  .test-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+    transition: width .35s ease;
+  }
+
+  .test-qcount {
+    display: block;
+    text-align: center;
+    margin-top: 8px;
+    font-size: .85rem;
+    color: var(--muted);
+  }
+
+  .test-question {
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .test-en {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--primary);
+    direction: ltr;
+  }
+
+  .test-hint { color: var(--muted); font-size: .88rem; margin-top: 6px; }
+
+  .test-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .test-option {
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    padding: 14px 10px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .test-option:hover:not(:disabled) { border-color: var(--primary); background: var(--soft); }
+  .test-option.correct {
+    border-color: #10b981;
+    background: #d1fae5;
+    color: #065f46;
+  }
+  .test-option.wrong {
+    border-color: #ef4444;
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .test-option:disabled { cursor: default; }
+
+  .test-feedback {
+    margin-top: 16px;
+    text-align: center;
+    font-weight: 700;
+    min-height: 1.4em;
+  }
+  .test-feedback.good { color: #10b981; }
+  .test-feedback.bad { color: #ef4444; }
+
+  .test-score {
+    margin-top: 8px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+  .test-score b { color: var(--primary); }
+
+  .test-next {
+    display: block;
+    margin: 16px auto 0;
+    border: none;
+    cursor: pointer;
+    padding: 12px 34px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+    transition: transform .2s;
+  }
+  .test-next:hover { transform: scale(1.05); }
+
+  .test-result { text-align: center; margin-top: 20px; }
+
+  .test-result h3 { font-size: 1.5rem; margin-bottom: 10px; }
+
+  .test-result .result-circle {
+    width: 130px;
+    height: 130px;
+    margin: 10px auto 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: conic-gradient(var(--primary) calc(var(--p, 0) * 1%), var(--soft) 0);
+    position: relative;
+  }
+  .test-result .result-circle::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    background: var(--card);
+  }
+  .test-result .result-circle span { position: relative; z-index: 1; color: var(--primary); }
+
+  .test-result p { color: var(--muted); margin-bottom: 18px; }
+
+  .test-retry {
+    border: none;
+    cursor: pointer;
+    padding: 13px 36px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px;
+    transition: transform .2s;
+  }
+  .test-retry:hover { transform: scale(1.05); }
+
+  /* ---------- وضع الكتابة ---------- */
+  .test-mode-switch {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .mode-btn {
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .mode-btn.active {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .writing-input {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .writing-input input {
+    flex: 1;
+    padding: 13px 18px;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    font-size: 1.05rem;
+    outline: none;
+    background: var(--card);
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .writing-input input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
+  }
+
+  .writing-check {
+    border: none;
+    cursor: pointer;
+    padding: 12px 22px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 14px;
+    transition: transform .2s;
+  }
+  .writing-check:hover { transform: scale(1.05); }
+  .writing-check:disabled { opacity: .5; cursor: default; transform: none; }
+
+  @media (max-width: 520px) {
+    .test-options { grid-template-columns: 1fr; }
+    .test-card { padding: 20px 16px; }
+    .test-en { font-size: 1.4rem; }
+    .card { padding: 14px; }
+    .card .english { font-size: 1rem; }
+    .card .arabic { font-size: 1rem; }
+    .speak-btn { width: 36px; height: 36px; }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 22px 12px 40px; }
+    header h1 { font-size: 1.55rem; }
+    .avatar { width: 104px; height: 104px; }
+    .quote { padding: 14px 16px; }
+    .quote .q-ar { font-size: 1rem; }
+    .welcome { padding: 20px 14px; }
+    .start-btn { padding: 14px 36px; font-size: 1.05rem; }
+    .theme-toggle { width: 40px; height: 40px; font-size: 1rem; top: 12px; left: 12px; }
+    .progress { padding: 14px 16px; }
+    .test-open-btn { padding: 13px 30px; font-size: 1rem; }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    body { padding: 30px 18px 50px; }
+    .grid { max-width: 100%; }
+  }
+
+  @media (min-width: 900px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="welcome" id="welcome">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="avatar-wrap">
+    <div class="avatar">
+      <!-- ضع صورتك في نفس المجلد باسم photo.jpg ليتم عرضها هنا -->
+      <img src="photo.jpg" id="avatarImg" alt="MORA" />
+    </div>
+  </div>
+
+  <h2 class="greet" id="greet">مرحبًا، MORA! 👋</h2>
+
+  <blockquote class="quote">
+    <p class="q-ar">"تعلم لغة هو أن تمتلك نافذة إضافية ننظر من خلالها إلى العالم"</p>
+    <p class="q-en">"To learn a language is to have one more window from which to look at the world."</p>
+    <cite>— مثل صيني · Chinese Proverb</cite>
+  </blockquote>
+
+  <button class="start-btn" id="startBtn">ابدأ التعلم 🚀</button>
+</div>
+
+<button class="theme-toggle" id="themeBtn" title="الوضع الليلي/النهاري">🌙</button>
+
+<header>
+  <h1>مفردات — الكلمات في حياتنا</h1>
+  <p>اضغط على زر السماعة 🔈 لسماع النطق، واختر سرعة الاستماع</p>
+  <div class="controls">
+    <div class="search-box">
+      <input type="text" id="search" placeholder="ابحث عن كلمة..." oninput="filterCards()" />
+    </div>
+    <div class="speed-control">
+      <span>سرعة النطق:</span>
+      <button class="speed-btn" data-rate="0.15">🐌 الأبطأ</button>
+      <button class="speed-btn" data-rate="0.4">🦥 بطيء جدًا</button>
+      <button class="speed-btn" data-rate="0.7">🐢 بطيء</button>
+      <button class="speed-btn active" data-rate="1">▶ عادي</button>
+      <button class="speed-btn" data-rate="1.5">⚡ سريع</button>
+      <button class="speed-btn" data-rate="2.2">🚀 سريع جدًا</button>
+    </div>
+    <div class="voice-control">
+      <span>الناطق:</span>
+      <select id="voiceSelect"></select>
+    </div>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="progress" id="progressBox" hidden>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="labels">
+      <span id="learnedLabel">حفظت 0 من 40</span>
+      <span class="rem" id="remainingLabel">متبقي 40</span>
+    </div>
+  </div>
+  <div class="test-btns">
+    <button class="test-open-btn" id="testOpenBtn">📝 اختبر نفسك</button>
+    <button class="study-btn" id="studyBtn">🎯 وضع الاختبار</button>
+  </div>
+</header>
+
+<main class="grid" id="grid"></main>
+
+<div class="test-overlay" id="testOverlay" hidden>
+  <div class="test-card">
+    <div class="test-top">
+      <span class="test-title">📝 اختبر نفسك</span>
+      <button class="test-close" id="testClose" title="إغلاق">✕</button>
+    </div>
+
+    <div class="test-mode-switch">
+      <button class="mode-btn active" data-testmode="choice">🖱 اختيار من متعدد</button>
+      <button class="mode-btn" data-testmode="writing">✍️ كتابة</button>
+    </div>
+    <div class="test-mode-switch" id="writeDirectionSwitch" hidden>
+      <button class="mode-btn active" data-mode="ar">اكتب بالعربية</button>
+      <button class="mode-btn" data-mode="en">اكتب بالإنجليزية</button>
+    </div>
+
+    <!-- وضع الاختيار -->
+    <div id="choiceSection">
+      <div class="test-progress">
+        <div class="test-bar"><div class="test-bar-fill" id="testBarFill"></div></div>
+        <span class="test-qcount" id="testQCount">السؤال 1 من 10</span>
+      </div>
+      <div class="test-question">
+        <div class="test-en" id="testEn"></div>
+        <div class="test-hint">اختر المعنى الصحيح بالعربية</div>
+      </div>
+      <div class="test-options" id="testOptions"></div>
+      <div class="test-feedback" id="testFeedback"></div>
+      <div class="test-score">النتيجة الحالية: <b id="testScore">0</b></div>
+      <button class="test-next" id="testNext" hidden>التالي ←</button>
+    </div>
+
+    <!-- وضع الكتابة -->
+    <div id="writingSection" hidden>
+      <div class="test-progress">
+        <div class="test-bar"><div class="test-bar-fill" id="writingBarFill"></div></div>
+        <span class="test-qcount" id="writingQCount">السؤال 1 من 10</span>
+      </div>
+      <div class="test-question">
+        <div class="test-en" id="writingPrompt"></div>
+        <div class="test-hint" id="writingHint">اكتب المعنى بالعربية</div>
+      </div>
+      <div class="writing-input">
+        <input type="text" id="writingAnswer" placeholder="اكتب إجابتك هنا..." autocomplete="off" />
+        <button class="writing-check" id="writingCheck">تحقق ✔</button>
+      </div>
+      <div class="test-feedback" id="writingFeedback"></div>
+      <div class="test-score">النتيجة الحالية: <b id="writingScore">0</b></div>
+      <button class="test-next" id="writingNext" hidden>التالي ←</button>
+    </div>
+
+    <div class="test-result" id="testResult" hidden>
+      <h3 id="testResultTitle">انتهى الاختبار! 🎉</h3>
+      <div class="result-circle" id="testCircle"><span id="testPct">0%</span></div>
+      <p id="testResultText"></p>
+      <button class="test-retry" id="testRetry">إعادة الاختبار 🔄</button>
+    </div>
+  </div>
+</div>
+
+<footer>40 كلمة أساسية — حظًا موفقًا في الحفظ 🎓</footer>
+
+<script>
+  const words = [
+    { en: "man", ar: "إنسان", pr: "مَان" },
+    { en: "people, human beings", ar: "الناس ، البشر", pr: "بِيبِل" },
+    { en: "the world", ar: "العالم", pr: "ذَ وَورلد" },
+    { en: "the universe", ar: "الكون", pr: "ذَ يُونِيفِرْس" },
+    { en: "the Earth", ar: "الأرض", pr: "ذِي إِيرْث" },
+    { en: "planet", ar: "كوكب", pr: "بْلَانِت" },
+    { en: "society", ar: "المجتمع", pr: "سُوسَايَتِي" },
+    { en: "nature", ar: "الطبيعة", pr: "نَيْتْشَر" },
+    { en: "environment", ar: "البيئة", pr: "إِنْفَايْرَنْمَنت" },
+    { en: "science", ar: "العلم ، علوم", pr: "سَايَنْس" },
+    { en: "literature", ar: "الأدب", pr: "لِتْرَتْشَر" },
+    { en: "culture", ar: "ثقافة", pr: "كَلْتْشَر" },
+    { en: "civilization", ar: "حضارة", pr: "سِيفَلَايْزَيْشَن" },
+    { en: "heritage", ar: "تراث", pr: "هِيرِتِيج" },
+    { en: "agriculture", ar: "زراعة", pr: "أَغْرِيكَلْتْشَر" },
+    { en: "industry", ar: "صناعة", pr: "إِنْدَسْتْرِي" },
+    { en: "trade", ar: "تجارة", pr: "تْرَيْد" },
+    { en: "citizen", ar: "مواطن", pr: "سِيتِيزَن" },
+    { en: "citizenship", ar: "مواطنة", pr: "سِيتِيزَنْشِيب" },
+    { en: "freedom", ar: "حرية", pr: "فْرِيدَم" },
+    { en: "welfare", ar: "رفاهية", pr: "وِيلْفَيَر" },
+    { en: "prosperity", ar: "رخاء", pr: "بْرُوسْبِيرِيتِي" },
+    { en: "education", ar: "التعليم", pr: "إِيدْجُوكَيْشَن" },
+    { en: "tourism", ar: "سياحة", pr: "تُورِيزَم" },
+    { en: "tourist", ar: "سائح", pr: "تُورِيسْت" },
+    { en: "art", ar: "فن", pr: "آرْت" },
+    { en: "rights", ar: "حقوق", pr: "رَايْتْس" },
+    { en: "duties", ar: "واجبات", pr: "دْيُوتِيز" },
+    { en: "peace", ar: "سلام", pr: "بِيس" },
+    { en: "war", ar: "حرب", pr: "وَور" },
+    { en: "friendship", ar: "صداقة", pr: "فْرِينْدْشِيب" },
+    { en: "youth, young people", ar: "الشباب", pr: "يُوث" },
+    { en: "the poor", ar: "الفقراء", pr: "ذَ بُور" },
+    { en: "poverty", ar: "فقر", pr: "بُوفَرْتِي" },
+    { en: "the rich", ar: "الأغنياء", pr: "ذَ رِيتْش" },
+    { en: "development", ar: "تطوير ، تنمية", pr: "دِيفِيلُبْمَنت" },
+    { en: "progress", ar: "تقدم", pr: "بْرُوغْرَس" },
+    { en: "achievement", ar: "إنجاز", pr: "أَتْشِيفْمَنت" },
+    { en: "efforts", ar: "جهود ، مجهودات", pr: "إِفَرْتْس" },
+    { en: "role", ar: "دور", pr: "رُول" }
+  ];
+
+  const grid = document.getElementById("grid");
+  const searchInput = document.getElementById("search");
+  const countEl = document.getElementById("count");
+  const speedBtns = document.querySelectorAll(".speed-btn");
+  const themeBtn = document.getElementById("themeBtn");
+
+  let rate = 1;
+  let voices = [];
+  let selectedVoice = null;
+  let pending = null;
+
+  const voiceSelect = document.getElementById("voiceSelect");
+
+  function loadVoices() {
+    voices = speechSynthesis.getVoices().filter(v => v.lang && v.lang.startsWith("en"));
+    const current = selectedVoice ? selectedVoice.name : null;
+    voiceSelect.innerHTML = '<option value="">الناطق الافتراضي</option>';
+    voices.forEach(v => {
+      const o = document.createElement("option");
+      o.value = v.name;
+      o.textContent = `${v.name} (${v.lang})`;
+      if (v.name === current) o.selected = true;
+      voiceSelect.appendChild(o);
+    });
+    selectedVoice = voices.find(v => v.name === current) || null;
+  }
+  if ("speechSynthesis" in window) {
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  voiceSelect.addEventListener("change", () => {
+    selectedVoice = voices.find(v => v.name === voiceSelect.value) || null;
+  });
+
+  function speak(text) {
+    if (!("speechSynthesis" in window)) {
+      alert("متصفحك لا يدعم النطق الصوتي");
+      return;
+    }
+    if (pending) {
+      clearTimeout(pending);
+      pending = null;
+    }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    if (selectedVoice) u.voice = selectedVoice;
+    u.rate = rate;
+    u.pitch = 1;
+    // Chrome bug: a small delay after cancel() makes speak() reliable.
+    pending = setTimeout(() => {
+      pending = null;
+      speechSynthesis.speak(u);
+    }, 80);
+  }
+
+  speedBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      speedBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      rate = parseFloat(btn.dataset.rate);
+      // Re-apply the speed to any word that is currently speaking.
+      if (speechSynthesis.speaking) {
+        speechSynthesis.speaking.rate = rate;
+      }
+    });
+  });
+
+  function applyTheme(dark) {
+    document.body.classList.toggle("dark", dark);
+    themeBtn.textContent = dark ? "☀️" : "🌙";
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  }
+
+  const saved = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(saved ? saved === "dark" : prefersDark);
+
+  themeBtn.addEventListener("click", () => {
+    applyTheme(!document.body.classList.contains("dark"));
+  });
+
+  function render(list) {
+    grid.innerHTML = "";
+    list.forEach((w, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.setProperty("--i", Math.min(i, 14));
+      const isLearned = learned.has(w.en);
+      card.innerHTML =
+        `<div class="top">` +
+          `<div class="english">${w.en}</div>` +
+          `<button class="speak-btn" title="استمع إلى النطق">🔈</button>` +
+        `</div>` +
+        `<div class="pronounce">النطق: <b>${w.pr}</b></div>` +
+        `<div class="divider"></div>` +
+        `<div class="arabic">${w.ar}</div>` +
+        `<button class="learned-btn${isLearned ? " checked" : ""}">${isLearned ? "✅ حفظتها" : "لم أحفظها بعد"}</button>`;
+      card.querySelector(".speak-btn").addEventListener("click", () => speak(w.en));
+      card.querySelector(".learned-btn").addEventListener("click", () => {
+        if (learned.has(w.en)) learned.delete(w.en);
+        else learned.add(w.en);
+        localStorage.setItem("learnedWords", JSON.stringify([...learned]));
+        updateProgress();
+        card.querySelector(".learned-btn").textContent = learned.has(w.en) ? "✅ حفظتها" : "لم أحفظها بعد";
+        card.querySelector(".learned-btn").classList.toggle("checked", learned.has(w.en));
+      });
+      card.addEventListener("click", e => {
+        if (!studyMode) return;
+        if (e.target.closest(".speak-btn") || e.target.closest(".learned-btn")) return;
+        card.classList.toggle("revealed");
+      });
+      grid.appendChild(card);
+    });
+    countEl.textContent = `${list.length} / ${words.length} كلمة`;
+    updateProgress();
+  }
+
+  function filterCards() {
+    const q = searchInput.value.trim().toLowerCase();
+    const filtered = q
+      ? words.filter(w =>
+          w.en.toLowerCase().includes(q) || w.ar.includes(q) || w.pr.includes(q))
+      : words;
+    render(filtered);
+  }
+
+  const welcome = document.getElementById("welcome");
+
+  const learned = new Set(JSON.parse(localStorage.getItem("learnedWords") || "[]"));
+  const progressBox = document.getElementById("progressBox");
+  const barFill = document.getElementById("barFill");
+  const learnedLabel = document.getElementById("learnedLabel");
+  const remainingLabel = document.getElementById("remainingLabel");
+
+  let studyMode = false;
+
+  function updateProgress() {
+    progressBox.hidden = false;
+    const total = words.length;
+    const done = learned.size;
+    const pct = Math.round((done / total) * 100);
+    barFill.style.width = pct + "%";
+    learnedLabel.textContent = `حفظت ${done} من ${total} (${pct}%)`;
+    remainingLabel.textContent = `متبقي ${total - done}`;
+  }
+
+  const studyBtn = document.getElementById("studyBtn");
+
+  studyBtn.addEventListener("click", () => {
+    studyMode = !studyMode;
+    document.body.classList.toggle("study-mode", studyMode);
+    studyBtn.classList.toggle("on", studyMode);
+    studyBtn.textContent = studyMode ? "🎯 وضع الاختبار: مفعّل" : "🎯 وضع الاختبار";
+    if (!studyMode) {
+      grid.querySelectorAll(".card.revealed").forEach(c => c.classList.remove("revealed"));
+    }
+  });
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    welcome.classList.add("hide");
+  });
+
+  /* ---------- وضع الاختبار ---------- */
+  const testOverlay = document.getElementById("testOverlay");
+  const testEn = document.getElementById("testEn");
+  const testOptions = document.getElementById("testOptions");
+  const testFeedback = document.getElementById("testFeedback");
+  const testScore = document.getElementById("testScore");
+  const testQCount = document.getElementById("testQCount");
+  const testBarFill = document.getElementById("testBarFill");
+  const testNext = document.getElementById("testNext");
+  const testResult = document.getElementById("testResult");
+  const testResultTitle = document.getElementById("testResultTitle");
+  const testCircle = document.getElementById("testCircle");
+  const testPct = document.getElementById("testPct");
+  const testResultText = document.getElementById("testResultText");
+
+  const choiceSection = document.getElementById("choiceSection");
+  const writingSection = document.getElementById("writingSection");
+  const writeDirectionSwitch = document.getElementById("writeDirectionSwitch");
+
+  const writingPrompt = document.getElementById("writingPrompt");
+  const writingHint = document.getElementById("writingHint");
+  const writingAnswer = document.getElementById("writingAnswer");
+  const writingFeedback = document.getElementById("writingFeedback");
+  const writingScore = document.getElementById("writingScore");
+  const writingQCount = document.getElementById("writingQCount");
+  const writingBarFill = document.getElementById("writingBarFill");
+  const writingCheck = document.getElementById("writingCheck");
+  const writingNext = document.getElementById("writingNext");
+
+  const modeBtns = document.querySelectorAll("[data-testmode]");
+  const directionBtns = document.querySelectorAll("[data-mode]");
+
+  let testMode = "choice";
+  let quizQ = [], quizIdx = 0, quizScore = 0;
+  let wMode = "ar";
+  let wQ = [], wIdx = 0, wScore = 0;
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function norm(s) {
+    return s.toLowerCase().replace(/[،,؛;.!؟?:()]/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function isMatch(user, target) {
+    const un = norm(user);
+    const parts = target.split(/[،,]/).map(norm).filter(Boolean);
+    return parts.some(p => p === un) || norm(target) === un;
+  }
+
+  function showSections() {
+    choiceSection.style.display = testMode === "choice" ? "" : "none";
+    writingSection.style.display = testMode === "writing" ? "" : "none";
+    writeDirectionSwitch.hidden = testMode !== "writing";
+    testResult.hidden = true;
+  }
+
+  /* --- وضع الاختيار --- */
+  function renderQuestion() {
+    showSections();
+    const q = quizQ[quizIdx];
+    testEn.textContent = q.en;
+    const distractors = shuffle(words.filter(w => w.en !== q.en)).slice(0, 3);
+    const options = shuffle([q, ...distractors]);
+    testOptions.innerHTML = "";
+    options.forEach(opt => {
+      const b = document.createElement("button");
+      b.className = "test-option";
+      b.textContent = opt.ar;
+      b.addEventListener("click", () => answer(q, opt, b));
+      testOptions.appendChild(b);
+    });
+    testQCount.textContent = `السؤال ${quizIdx + 1} من ${quizQ.length}`;
+    testBarFill.style.width = ((quizIdx) / quizQ.length * 100) + "%";
+    testScore.textContent = quizScore;
+    testFeedback.textContent = "";
+    testFeedback.className = "test-feedback";
+    testNext.hidden = true;
+  }
+
+  function answer(q, opt, btn) {
+    const buttons = testOptions.querySelectorAll(".test-option");
+    buttons.forEach(b => b.disabled = true);
+    if (opt.en === q.en) {
+      btn.classList.add("correct");
+      quizScore++;
+      testFeedback.textContent = "✅ إجابة صحيحة!";
+      testFeedback.className = "test-feedback good";
+    } else {
+      btn.classList.add("wrong");
+      const correct = [...buttons].find(b => b.textContent === q.ar);
+      if (correct) correct.classList.add("correct");
+      testFeedback.textContent = `❌ الإجابة الصحيحة: ${q.ar}`;
+      testFeedback.className = "test-feedback bad";
+    }
+    testScore.textContent = quizScore;
+    if (quizIdx + 1 < quizQ.length) {
+      testNext.hidden = false;
+    } else {
+      setTimeout(showResult, 800);
+    }
+  }
+
+  testNext.addEventListener("click", () => {
+    quizIdx++;
+    renderQuestion();
+  });
+
+  /* --- وضع الكتابة --- */
+  function renderWritingQuestion() {
+    showSections();
+    const q = wQ[wIdx];
+    if (wMode === "ar") {
+      writingPrompt.textContent = q.en;
+      writingHint.textContent = "اكتب المعنى بالعربية";
+      writingAnswer.placeholder = "اكتب المعنى بالعربية...";
+      writingAnswer.dir = "rtl";
+    } else {
+      writingPrompt.textContent = q.ar;
+      writingHint.textContent = "اكتب الكلمة بالإنجليزية";
+      writingAnswer.placeholder = "Write the word in English...";
+      writingAnswer.dir = "ltr";
+    }
+    writingAnswer.value = "";
+    writingAnswer.disabled = false;
+    writingCheck.disabled = false;
+    writingFeedback.textContent = "";
+    writingFeedback.className = "test-feedback";
+    writingQCount.textContent = `السؤال ${wIdx + 1} من ${wQ.length}`;
+    writingBarFill.style.width = ((wIdx) / wQ.length * 100) + "%";
+    writingScore.textContent = wScore;
+    writingNext.hidden = true;
+    writingAnswer.focus();
+  }
+
+  function checkWriting() {
+    const q = wQ[wIdx];
+    const user = writingAnswer.value;
+    const target = wMode === "ar" ? q.ar : q.en;
+    writingAnswer.disabled = true;
+    writingCheck.disabled = true;
+    if (user.trim() && isMatch(user, target)) {
+      wScore++;
+      writingFeedback.textContent = "✅ إجابة صحيحة!";
+      writingFeedback.className = "test-feedback good";
+    } else {
+      writingFeedback.textContent = `❌ الإجابة الصحيحة: ${target}`;
+      writingFeedback.className = "test-feedback bad";
+    }
+    writingScore.textContent = wScore;
+    if (wIdx + 1 < wQ.length) {
+      writingNext.hidden = false;
+    } else {
+      setTimeout(showResult, 900);
+    }
+  }
+
+  writingCheck.addEventListener("click", checkWriting);
+
+  writingAnswer.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !writingAnswer.disabled) checkWriting();
+  });
+
+  writingNext.addEventListener("click", () => {
+    wIdx++;
+    renderWritingQuestion();
+  });
+
+  /* --- النتيجة --- */
+  function showResult() {
+    choiceSection.style.display = "none";
+    writingSection.style.display = "none";
+    writeDirectionSwitch.hidden = true;
+    testResult.hidden = false;
+    const total = testMode === "choice" ? quizQ.length : wQ.length;
+    const score = testMode === "choice" ? quizScore : wScore;
+    const pct = Math.round((score / total) * 100);
+    testPct.textContent = pct + "%";
+    testCircle.style.setProperty("--p", pct);
+    const verb = testMode === "choice" ? "أجبت" : "كتبت";
+    const suffix = testMode === "choice" ? "أنت جاهز للكلمات التالية." : "أنت ممتاز في الإملاء.";
+    if (pct >= 80) {
+      testResultTitle.textContent = "ممتاز! 🏆";
+      testResultText.textContent = `أحسنت! ${verb} على ${score} من ${total} بشكل صحيح. ${suffix}`;
+    } else if (pct >= 50) {
+      testResultTitle.textContent = "جيد جدًا! 👏";
+      testResultText.textContent = `${verb} على ${score} من ${total} بشكل صحيح. راجع الكلمات التي أخطأت فيها وعد مرة أخرى.`;
+    } else {
+      testResultTitle.textContent = "لا بأس، واصل! 💪";
+      testResultText.textContent = `${verb} على ${score} من ${total} بشكل صحيح. راجع الكلمات ثم أعد الاختبار.`;
+    }
+  }
+
+  function startTest() {
+    testOverlay.hidden = false;
+    testMode = modeBtns[0].classList.contains("active") ? "choice" : "writing";
+    if (testMode === "choice") {
+      quizQ = shuffle(words).slice(0, 10);
+      quizIdx = 0;
+      quizScore = 0;
+      renderQuestion();
+    } else {
+      wQ = shuffle(words).slice(0, 10);
+      wIdx = 0;
+      wScore = 0;
+      renderWritingQuestion();
+    }
+  }
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      modeBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      testMode = btn.dataset.testmode;
+      if (testMode === "choice") {
+        quizQ = shuffle(words).slice(0, 10);
+        quizIdx = 0;
+        quizScore = 0;
+        renderQuestion();
+      } else {
+        wQ = shuffle(words).slice(0, 10);
+        wIdx = 0;
+        wScore = 0;
+        renderWritingQuestion();
+      }
+    });
+  });
+
+  directionBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      directionBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      wMode = btn.dataset.mode;
+      wQ = shuffle(words).slice(0, 10);
+      wIdx = 0;
+      wScore = 0;
+      renderWritingQuestion();
+    });
+  });
+
+  document.getElementById("testOpenBtn").addEventListener("click", startTest);
+  document.getElementById("testRetry").addEventListener("click", startTest);
+  document.getElementById("testClose").addEventListener("click", () => {
+    testOverlay.hidden = true;
+  });
+
+  render(words);
+</script>
+
+</body>
+</html>
