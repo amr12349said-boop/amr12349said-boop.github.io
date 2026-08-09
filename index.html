@@ -1238,7 +1238,177 @@
   .sp-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .sp-toast.study { background: linear-gradient(90deg, var(--primary), var(--accent)); }
   .sp-toast.break { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #3b2a00; }
+
+  /* ---------- تسجيل الدخول ---------- */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(13, 10, 30, .7);
+    backdrop-filter: blur(8px);
+    transition: opacity .5s ease, visibility .5s ease;
+  }
+  .login-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .35);
+  }
+  .login-logo { font-size: 2.6rem; text-align: center; }
+  .login-card h2 {
+    text-align: center;
+    color: var(--ink);
+    font-size: 1.5rem;
+    margin-top: 6px;
+  }
+  .login-card .sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: .9rem;
+    margin: 6px 0 18px;
+  }
+  .login-field { margin-bottom: 12px; }
+  .login-field label {
+    display: block;
+    font-size: .85rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .login-field input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--soft);
+    color: var(--ink);
+    font-size: 1rem;
+    outline: none;
+  }
+  .login-field input:focus { border-color: var(--primary); }
+  .auth-msg {
+    font-size: .85rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .auth-msg.ok { display: block; background: #e6f9ec; color: #12622f; }
+  .auth-msg.bad { display: block; background: #fde8e8; color: #9b1c1c; }
+  body.dark .auth-msg.ok { background: #12331f; color: #7ee2a0; }
+  body.dark .auth-msg.bad { background: #3b1515; color: #ffb3b3; }
+  .login-submit {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .login-submit:disabled { opacity: .6; cursor: wait; }
+  .login-toggle {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: .9rem;
+  }
+  .login-forgot {
+    display: block;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: .85rem;
+    cursor: pointer;
+    margin: 10px auto 0;
+    text-decoration: underline;
+  }
+  .login-note {
+    font-size: .78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: .8rem;
+    margin: 14px 0;
+  }
+  .login-divider::before,
+  .login-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .google-btn:hover { background: var(--soft); }
+  .google-btn:disabled { opacity: .6; cursor: wait; }
+
+  .user-bar {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 10px 6px 6px;
+    box-shadow: 0 8px 24px var(--shadow);
+    font-size: .85rem;
+    color: var(--ink);
+  }
+  .user-bar b { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: ltr; }
+  .user-bar button {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border: none;
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: .82rem;
+    cursor: pointer;
+  }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -1263,6 +1433,35 @@
   </blockquote>
 
   <button class="start-btn" id="startBtn">ابدأ التعلم 🚀</button>
+</div>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-logo">📚</div>
+    <h2 id="loginTitle">أهلًا بيك 👋</h2>
+    <p class="sub" id="loginSub">سجّل دخول عشان تحفظ كلماتك وتجيبها من أي جهاز</p>
+    <div class="auth-msg" id="authMsg"></div>
+    <div class="login-field">
+      <label for="authEmail">البريد الإلكتروني</label>
+      <input type="email" id="authEmail" dir="ltr" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="login-field">
+      <label for="authPass">كلمة المرور</label>
+      <input type="password" id="authPass" dir="ltr" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-submit" id="authSubmit">تسجيل الدخول</button>
+    <button class="login-forgot" id="authForgot">نسيت كلمة المرور؟</button>
+    <button class="login-toggle" id="authToggle">مفيش حساب؟ اعمل واحد جديد</button>
+    <div class="login-divider"><span>أو</span></div>
+    <button class="google-btn" id="googleBtn">سجّل الدخول بحساب Google</button>
+    <p class="login-note">🔒 مجاني 100% — كلماتك المحفوظة بتتزامن على حسابتك من أي جهاز</p>
+  </div>
+</div>
+
+<div class="user-bar" id="userBar" hidden>
+  <span>👤</span>
+  <b id="userLabel"></b>
+  <button id="logoutBtn">تسجيل الخروج</button>
 </div>
 
 <button class="theme-toggle" id="themeBtn" title="الوضع الليلي/النهاري">🌙</button>
@@ -1593,6 +1792,7 @@
         if (learned.has(w.en)) learned.delete(w.en);
         else learned.add(w.en);
         localStorage.setItem("learnedWords", JSON.stringify([...learned]));
+        if (typeof pushLearned === "function") pushLearned();
         updateProgress();
         card.querySelector(".learned-btn").textContent = learned.has(w.en) ? "✅ حفظتها" : "لم أحفظها بعد";
         card.querySelector(".learned-btn").classList.toggle("checked", learned.has(w.en));
@@ -1636,7 +1836,7 @@
 
   const welcome = document.getElementById("welcome");
 
-  const learned = new Set(JSON.parse(localStorage.getItem("learnedWords") || "[]"));
+  let learned = new Set(JSON.parse(localStorage.getItem("learnedWords") || "[]"));
   const progressBox = document.getElementById("progressBox");
   const barFill = document.getElementById("barFill");
   const learnedLabel = document.getElementById("learnedLabel");
@@ -2242,6 +2442,167 @@
   renderSp();
 
   render(words);
+
+  // ===== تسجيل الدخول والمزامنة (Firebase) =====
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBRnRQQ9uPz1_UaZYOfpnJ7LW_KZAHMs_A",
+    authDomain: "mora3-ab167.firebaseapp.com",
+    projectId: "mora3-ab167",
+    appId: "1:585120906730:web:83b0534766aebf04504693"
+  };
+
+  const loginOverlay = document.getElementById("loginOverlay");
+  const authMsg = document.getElementById("authMsg");
+  const authSubmit = document.getElementById("authSubmit");
+  const authToggle = document.getElementById("authToggle");
+  const authForgot = document.getElementById("authForgot");
+  const authEmail = document.getElementById("authEmail");
+  const authPass = document.getElementById("authPass");
+  const userBar = document.getElementById("userBar");
+  const userLabel = document.getElementById("userLabel");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const googleBtn = document.getElementById("googleBtn");
+
+  let auth = null, db = null, uid = null;
+  let isRegister = false;
+  let learnedTimer = null;
+  const fbReady = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+
+  function showAuthMsg(text, ok) {
+    authMsg.textContent = text;
+    authMsg.className = "auth-msg " + (ok ? "ok" : "bad");
+  }
+  function syncAuthUi() {
+    authToggle.textContent = isRegister ? "عندي حساب — سجّل دخول" : "مفيش حساب؟ اعمل واحد جديد";
+    authSubmit.textContent = isRegister ? "إنشاء حساب" : "تسجيل الدخول";
+  }
+
+  if (!fbReady) {
+    loginOverlay.classList.add("hide");
+  } else {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    auth = firebase.auth();
+    db = firebase.firestore();
+
+    function pushLearned() {
+      if (!uid) return;
+      clearTimeout(learnedTimer);
+      learnedTimer = setTimeout(async () => {
+        try {
+          await db.collection("users").doc(uid).set({
+            learned: [...learned],
+            email: userLabel.textContent,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        } catch (e) { console.log("sync fail", e); }
+      }, 1200);
+    }
+
+    async function loadFromServer() {
+      if (!uid) return;
+      try {
+        const doc = await db.collection("users").doc(uid).get();
+        if (doc.exists && Array.isArray(doc.data().learned)) {
+          learned = new Set(doc.data().learned);
+          localStorage.setItem("learnedWords", JSON.stringify([...learned]));
+        } else if (learned.size > 0) {
+          pushLearned();
+        }
+        render(words);
+        updateProgress();
+        filterCards();
+      } catch (e) {
+        console.log("load fail", e);
+        showAuthMsg("مشكلة في تحميل كلماتك: " + e.message, false);
+      }
+    }
+
+    auth.onAuthStateChanged(async user => {
+      if (user) {
+        uid = user.uid;
+        loginOverlay.classList.add("hide");
+        userBar.hidden = false;
+        userLabel.textContent = user.email || "";
+        await loadFromServer();
+      } else {
+        uid = null;
+        userBar.hidden = true;
+        authEmail.value = "";
+        authPass.value = "";
+        authMsg.className = "auth-msg";
+        loginOverlay.classList.remove("hide");
+      }
+    });
+
+    authSubmit.addEventListener("click", async () => {
+      const email = authEmail.value.trim();
+      const pass = authPass.value;
+      if (!email || pass.length < 6) {
+        showAuthMsg("اكتب بريد إلكتروني صحيح وكلمة مرور 6 أحرف على الأقل", false);
+        return;
+      }
+      authSubmit.disabled = true;
+      authSubmit.textContent = "...";
+      try {
+        if (isRegister) await auth.createUserWithEmailAndPassword(email, pass);
+        else await auth.signInWithEmailAndPassword(email, pass);
+        showAuthMsg("تم تسجيل الدخول بنجاح ✅", true);
+      } catch (e) {
+        const map = {
+          "invalid-email": "البريد الإلكتروني مش مكتوب صح",
+          "user-not-found": "مفيش حساب بالبريد ده — اعمل واحد جديد",
+          "wrong-password": "كلمة المرور غلط",
+          "email-already-in-use": "الحساب ده موجود بالفعل — سجّل دخول",
+          "weak-password": "كلمة المرور ضعيفة (6 أحرف على الأقل)",
+          "too-many-requests": "كثرة المحاولات — جرّب بعد شوية"
+        };
+        showAuthMsg(map[e.code] || e.message, false);
+      } finally {
+        syncAuthUi();
+        authSubmit.disabled = false;
+      }
+    });
+
+    authToggle.addEventListener("click", () => {
+      isRegister = !isRegister;
+      syncAuthUi();
+    });
+
+    authForgot.addEventListener("click", async () => {
+      const email = authEmail.value.trim();
+      if (!email) {
+        showAuthMsg("اكتب بريدك الأول عشان نبعتلك رابط إعادة التعيين", false);
+        return;
+      }
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showAuthMsg("اتبعثلك رابط إعادة تعيين كلمة المرور ✅", true);
+      } catch (e) {
+        showAuthMsg("مشكلة: " + e.message, false);
+      }
+    });
+
+    googleBtn.addEventListener("click", async () => {
+      googleBtn.disabled = true;
+      googleBtn.textContent = "جاري فتح نافذة Google...";
+      try {
+        await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        showAuthMsg("تم تسجيل الدخول بحساب Google ✅", true);
+      } catch (e) {
+        const map = {
+          "popup-blocked": "المتصفح منع النافذة — اسمح بالمنبثقات (pop-ups) لهذا الموقع وكرر المحاولة",
+          "unauthorized-domain": "المجال ده مش متضاف في إعدادات Authentication — ضيفه وارجع جرب",
+          "popup-closed-by-user": "ألغيت نافذة تسجيل الدخول"
+        };
+        showAuthMsg(map[e.code] || e.message, false);
+      } finally {
+        googleBtn.disabled = false;
+        googleBtn.textContent = "سجّل الدخول بحساب Google";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => auth.signOut());
+  }
 </script>
 
 </body>
