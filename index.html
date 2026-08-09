@@ -1996,7 +1996,7 @@
   }
 
   function startWritingQuiz() {
-    wQ = shuffle(words).slice(0, 10);
+    wQ = shuffle(words);
     wIdx = 0;
     wScore = 0;
     renderWritingQuestion();
@@ -2143,7 +2143,7 @@
     testOverlay.hidden = false;
     testMode = modeBtns[0].classList.contains("active") ? "choice" : "writing";
     if (testMode === "choice") {
-      quizQ = shuffle(words).slice(0, 10);
+      quizQ = shuffle(words);
       quizIdx = 0;
       quizScore = 0;
       renderQuestion();
@@ -2158,7 +2158,7 @@
       btn.classList.add("active");
       testMode = btn.dataset.testmode;
       if (testMode === "choice") {
-        quizQ = shuffle(words).slice(0, 10);
+        quizQ = shuffle(words);
         quizIdx = 0;
         quizScore = 0;
         renderQuestion();
