@@ -1389,22 +1389,45 @@
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 999px;
-    padding: 6px 10px 6px 6px;
+    padding: 5px 6px 5px 12px;
     box-shadow: 0 8px 24px var(--shadow);
-    font-size: .85rem;
+    font-size: .8rem;
     color: var(--ink);
   }
-  .user-bar b { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: ltr; }
-  .user-bar button {
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    border: none;
+  .user-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
-    border-radius: 999px;
-    padding: 6px 12px;
-    font-weight: 700;
-    font-size: .82rem;
-    cursor: pointer;
+    font-weight: 800;
+    font-size: .78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
+  .user-name {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: ltr;
+  }
+  .user-bar button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+  .user-bar button:hover { background: var(--line); color: var(--ink); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1459,9 +1482,9 @@
 </div>
 
 <div class="user-bar" id="userBar" hidden>
-  <span>👤</span>
-  <b id="userLabel"></b>
-  <button id="logoutBtn">تسجيل الخروج</button>
+  <span class="user-avatar" id="userAvatar">👤</span>
+  <span class="user-name" id="userLabel"></span>
+  <button id="logoutBtn" title="تسجيل الخروج">↪</button>
 </div>
 
 <button class="theme-toggle" id="themeBtn" title="الوضع الليلي/النهاري">🌙</button>
@@ -2460,13 +2483,14 @@
   const authPass = document.getElementById("authPass");
   const userBar = document.getElementById("userBar");
   const userLabel = document.getElementById("userLabel");
+  const userAvatar = document.getElementById("userAvatar");
   const logoutBtn = document.getElementById("logoutBtn");
   const googleBtn = document.getElementById("googleBtn");
 
   let auth = null, db = null, uid = null;
   let isRegister = false;
   let learnedTimer = null;
-  const fbReady = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+  const fbReady = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && typeof firebase !== "undefined" && firebase.apps);
 
   function showAuthMsg(text, ok) {
     authMsg.textContent = text;
@@ -2523,6 +2547,7 @@
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = user.email || "";
+        userAvatar.textContent = ((user.email || user.displayName || "؟").trim()[0] || "؟").toUpperCase();
         await loadFromServer();
       } else {
         uid = null;
