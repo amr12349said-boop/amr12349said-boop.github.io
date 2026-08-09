@@ -1378,6 +1378,61 @@
   .google-btn:hover { background: var(--soft); }
   .google-btn:disabled { opacity: .6; cursor: wait; }
 
+  /* ---------- سياسة الخصوصية ---------- */
+  .privacy-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 290;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(13, 10, 30, .7);
+    backdrop-filter: blur(8px);
+  }
+  .privacy-card {
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, .35);
+  }
+  .privacy-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .privacy-top h3 { color: var(--ink); font-size: 1.2rem; }
+  .privacy-top button {
+    background: var(--soft);
+    border: none;
+    color: var(--ink);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .privacy-body { color: var(--ink); font-size: .92rem; line-height: 1.9; }
+  .privacy-body p { margin-bottom: 12px; }
+
+  /* ---------- الإعلانات ---------- */
+  .ad-slot {
+    width: 100%;
+    max-width: 720px;
+    min-height: 90px;
+    margin: 18px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
   .user-menu {
     position: fixed;
     top: 12px;
@@ -1439,6 +1494,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- ⬇️ الإعلانات (Google AdSense) — لما تاخد الموافقة، فك التعليق وحط رقمك مكان ca-pub-XXXXXXXXXXXXXXXX -->
+<!--
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
 </head>
 <body>
 
@@ -1611,6 +1670,9 @@
 
 <main class="grid" id="grid"></main>
 
+<!-- ⬇️ مكان الإعلان تحت الكلمات (يتفعل بعد موافقة AdSense) -->
+<div class="ad-slot" id="adSlotBottom"></div>
+
 <div class="test-overlay" id="testOverlay" hidden>
   <div class="test-card">
     <div class="test-top">
@@ -1674,7 +1736,26 @@
   </div>
 </div>
 
-<footer>40 كلمة أساسية — حظًا موفقًا في الحفظ 🎓</footer>
+<footer>
+  40 كلمة أساسية — حظًا موفقًا في الحفظ 🎓 ·
+  <a href="#" id="privacyLink">سياسة الخصوصية</a>
+</footer>
+
+<div class="privacy-overlay" id="privacyOverlay" hidden>
+  <div class="privacy-card">
+    <div class="privacy-top">
+      <h3>سياسة الخصوصية</h3>
+      <button id="privacyClose" title="إغلاق">✕</button>
+    </div>
+    <div class="privacy-body">
+      <p><b>١) البيانات التي نجمعها:</b> عندما تنشئ حسابًا على الموقع، نخزن بريدك الإلكتروني واسمك (إن سجلت بحساب Google) وكلماتك المحفوظة. جميع البيانات محفوظة على خوادم Firebase التابعة لشركة Google.</p>
+      <p><b>٢) التخزين المحلي (localStorage):</b> يستخدم الموقع متصفحك لتذكر تفضيلاتك وإعداداتك محليًا على جهازك.</p>
+      <p><b>٣) الإعلانات من طرف ثالث:</b> قد يعرض الموقع إعلانات من شبكات إعلانية (مثل Google AdSense) تستخدم ملفات تعريف الارتباط لعرض إعلانات ملائمة. يمكنك التحكم في تفضيلات الإعلانات من إعدادات Google.</p>
+      <p><b>٤) حقوقك:</b> يمكنك طلب حذف حسابك وبياناتك في أي وقت عبر التواصل معنا، أو حذفه من إعدادات حسابك.</p>
+      <p><b>٥) التواصل:</b> لأي استفسار عن الخصوصية، تواصل معنا عبر بريد الحساب الظاهر في الموقع.</p>
+    </div>
+  </div>
+</div>
 
 <script>
   const words = [
@@ -2646,6 +2727,20 @@
 
     logoutBtn.addEventListener("click", () => auth.signOut());
   }
+</script>
+
+<script>
+  const privacyOverlay = document.getElementById("privacyOverlay");
+  document.getElementById("privacyLink").addEventListener("click", e => {
+    e.preventDefault();
+    privacyOverlay.hidden = false;
+  });
+  document.getElementById("privacyClose").addEventListener("click", () => {
+    privacyOverlay.hidden = true;
+  });
+  privacyOverlay.addEventListener("click", e => {
+    if (e.target === privacyOverlay) privacyOverlay.hidden = true;
+  });
 </script>
 
 </body>
