@@ -1378,56 +1378,63 @@
   .google-btn:hover { background: var(--soft); }
   .google-btn:disabled { opacity: .6; cursor: wait; }
 
-  .user-bar {
+  .user-menu {
     position: fixed;
     top: 12px;
     left: 12px;
     z-index: 150;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 5px 6px 5px 12px;
-    box-shadow: 0 8px 24px var(--shadow);
-    font-size: .8rem;
-    color: var(--ink);
   }
   .user-avatar {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
+    border: 2px solid var(--card);
     background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
     font-weight: 800;
-    font-size: .78rem;
+    font-size: .95rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px var(--shadow);
+    transition: transform .15s;
   }
-  .user-name {
-    max-width: 110px;
+  .user-avatar:hover { transform: scale(1.08); }
+  .user-drop {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    min-width: 180px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 20px 50px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .user-drop .email {
+    font-size: .8rem;
+    color: var(--muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     direction: ltr;
+    text-align: center;
   }
-  .user-bar button {
-    width: 28px;
-    height: 28px;
+  .user-drop button {
     border: none;
-    border-radius: 50%;
+    border-radius: 10px;
     background: var(--soft);
-    color: var(--muted);
-    font-size: 1rem;
+    color: var(--ink);
+    padding: 9px;
+    font-weight: 700;
+    font-size: .85rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background .2s;
   }
-  .user-bar button:hover { background: var(--line); color: var(--ink); }
+  .user-drop button:hover { background: var(--line); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1481,10 +1488,12 @@
   </div>
 </div>
 
-<div class="user-bar" id="userBar" hidden>
-  <span class="user-avatar" id="userAvatar">👤</span>
-  <span class="user-name" id="userLabel"></span>
-  <button id="logoutBtn" title="تسجيل الخروج">↪</button>
+<div class="user-menu" id="userBar" hidden>
+  <button class="user-avatar" id="userAvatar" title="حسابك">👤</button>
+  <div class="user-drop" id="userDrop" hidden>
+    <span class="email" id="userLabel"></span>
+    <button id="logoutBtn">تسجيل الخروج</button>
+  </div>
 </div>
 
 <button class="theme-toggle" id="themeBtn" title="الوضع الليلي/النهاري">🌙</button>
@@ -2484,6 +2493,7 @@
   const userBar = document.getElementById("userBar");
   const userLabel = document.getElementById("userLabel");
   const userAvatar = document.getElementById("userAvatar");
+  const userDrop = document.getElementById("userDrop");
   const logoutBtn = document.getElementById("logoutBtn");
   const googleBtn = document.getElementById("googleBtn");
 
@@ -2624,6 +2634,14 @@
         googleBtn.disabled = false;
         googleBtn.textContent = "سجّل الدخول بحساب Google";
       }
+    });
+
+    userAvatar.addEventListener("click", e => {
+      e.stopPropagation();
+      userDrop.hidden = !userDrop.hidden;
+    });
+    document.addEventListener("click", e => {
+      if (!e.target.closest(".user-menu")) userDrop.hidden = true;
     });
 
     logoutBtn.addEventListener("click", () => auth.signOut());
