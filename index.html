@@ -652,6 +652,32 @@
     color: #3b2a00;
   }
 
+  .section-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .section-btn {
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .section-btn:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.04); }
+  .section-btn.active {
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+
   /* ---------- شاشة الاختبار ---------- */
   .test-overlay {
     position: fixed;
@@ -1595,6 +1621,7 @@
     <button class="filter-btn" id="filterLearned" data-filter="learned">✅ حفظتها</button>
     <button class="filter-btn" id="filterNotLearned" data-filter="notlearned">⭕ لم أحفظهم</button>
   </div>
+  <div class="section-btns" id="sectionBtns"></div>
 </header>
 
 <nav class="sp-nav" id="spNav"></nav>
@@ -1759,46 +1786,86 @@
 
 <script>
   const words = [
-    { en: "man", ar: "إنسان", pr: "مَان" },
-    { en: "people, human beings", ar: "الناس ، البشر", pr: "بِيبِل" },
-    { en: "the world", ar: "العالم", pr: "ذَ وَورلد" },
-    { en: "the universe", ar: "الكون", pr: "ذَ يُونِيفِرْس" },
-    { en: "the Earth", ar: "الأرض", pr: "ذِي إِيرْث" },
-    { en: "planet", ar: "كوكب", pr: "بْلَانِت" },
-    { en: "society", ar: "المجتمع", pr: "سُوسَايَتِي" },
-    { en: "nature", ar: "الطبيعة", pr: "نَيْتْشَر" },
-    { en: "environment", ar: "البيئة", pr: "إِنْفَايْرَنْمَنت" },
-    { en: "science", ar: "العلم ، علوم", pr: "سَايَنْس" },
-    { en: "literature", ar: "الأدب", pr: "لِتْرَتْشَر" },
-    { en: "culture", ar: "ثقافة", pr: "كَلْتْشَر" },
-    { en: "civilization", ar: "حضارة", pr: "سِيفَلَايْزَيْشَن" },
-    { en: "heritage", ar: "تراث", pr: "هِيرِتِيج" },
-    { en: "agriculture", ar: "زراعة", pr: "أَغْرِيكَلْتْشَر" },
-    { en: "industry", ar: "صناعة", pr: "إِنْدَسْتْرِي" },
-    { en: "trade", ar: "تجارة", pr: "تْرَيْد" },
-    { en: "citizen", ar: "مواطن", pr: "سِيتِيزَن" },
-    { en: "citizenship", ar: "مواطنة", pr: "سِيتِيزَنْشِيب" },
-    { en: "freedom", ar: "حرية", pr: "فْرِيدَم" },
-    { en: "welfare", ar: "رفاهية", pr: "وِيلْفَيَر" },
-    { en: "prosperity", ar: "رخاء", pr: "بْرُوسْبِيرِيتِي" },
-    { en: "education", ar: "التعليم", pr: "إِيدْجُوكَيْشَن" },
-    { en: "tourism", ar: "سياحة", pr: "تُورِيزَم" },
-    { en: "tourist", ar: "سائح", pr: "تُورِيسْت" },
-    { en: "art", ar: "فن", pr: "آرْت" },
-    { en: "rights", ar: "حقوق", pr: "رَايْتْس" },
-    { en: "duties", ar: "واجبات", pr: "دْيُوتِيز" },
-    { en: "peace", ar: "سلام", pr: "بِيس" },
-    { en: "war", ar: "حرب", pr: "وَور" },
-    { en: "friendship", ar: "صداقة", pr: "فْرِينْدْشِيب" },
-    { en: "youth, young people", ar: "الشباب", pr: "يُوث" },
-    { en: "the poor", ar: "الفقراء", pr: "ذَ بُور" },
-    { en: "poverty", ar: "فقر", pr: "بُوفَرْتِي" },
-    { en: "the rich", ar: "الأغنياء", pr: "ذَ رِيتْش" },
-    { en: "development", ar: "تطوير ، تنمية", pr: "دِيفِيلُبْمَنت" },
-    { en: "progress", ar: "تقدم", pr: "بْرُوغْرَس" },
-    { en: "achievement", ar: "إنجاز", pr: "أَتْشِيفْمَنت" },
-    { en: "efforts", ar: "جهود ، مجهودات", pr: "إِفَرْتْس" },
-    { en: "role", ar: "دور", pr: "رُول" }
+    { sec: 1, en: "man", ar: "إنسان", pr: "مَان" },
+    { sec: 1, en: "people, human beings", ar: "الناس ، البشر", pr: "بِيبِل" },
+    { sec: 1, en: "the world", ar: "العالم", pr: "ذَ وَورلد" },
+    { sec: 1, en: "the universe", ar: "الكون", pr: "ذَ يُونِيفِرْس" },
+    { sec: 1, en: "the Earth", ar: "الأرض", pr: "ذِي إِيرْث" },
+    { sec: 1, en: "planet", ar: "كوكب", pr: "بْلَانِت" },
+    { sec: 1, en: "society", ar: "المجتمع", pr: "سُوسَايَتِي" },
+    { sec: 1, en: "nature", ar: "الطبيعة", pr: "نَيْتْشَر" },
+    { sec: 1, en: "environment", ar: "البيئة", pr: "إِنْفَايْرَنْمَنت" },
+    { sec: 1, en: "science", ar: "العلم ، علوم", pr: "سَايَنْس" },
+    { sec: 1, en: "literature", ar: "الأدب", pr: "لِتْرَتْشَر" },
+    { sec: 1, en: "culture", ar: "ثقافة", pr: "كَلْتْشَر" },
+    { sec: 1, en: "civilization", ar: "حضارة", pr: "سِيفَلَايْزَيْشَن" },
+    { sec: 1, en: "heritage", ar: "تراث", pr: "هِيرِتِيج" },
+    { sec: 1, en: "agriculture", ar: "زراعة", pr: "أَغْرِيكَلْتْشَر" },
+    { sec: 1, en: "industry", ar: "صناعة", pr: "إِنْدَسْتْرِي" },
+    { sec: 1, en: "trade", ar: "تجارة", pr: "تْرَيْد" },
+    { sec: 1, en: "citizen", ar: "مواطن", pr: "سِيتِيزَن" },
+    { sec: 1, en: "citizenship", ar: "مواطنة", pr: "سِيتِيزَنْشِيب" },
+    { sec: 1, en: "freedom", ar: "حرية", pr: "فْرِيدَم" },
+    { sec: 1, en: "welfare", ar: "رفاهية", pr: "وِيلْفَيَر" },
+    { sec: 1, en: "prosperity", ar: "رخاء", pr: "بْرُوسْبِيرِيتِي" },
+    { sec: 1, en: "education", ar: "التعليم", pr: "إِيدْجُوكَيْشَن" },
+    { sec: 1, en: "tourism", ar: "سياحة", pr: "تُورِيزَم" },
+    { sec: 1, en: "tourist", ar: "سائح", pr: "تُورِيسْت" },
+    { sec: 1, en: "art", ar: "فن", pr: "آرْت" },
+    { sec: 1, en: "rights", ar: "حقوق", pr: "رَايْتْس" },
+    { sec: 1, en: "duties", ar: "واجبات", pr: "دْيُوتِيز" },
+    { sec: 1, en: "peace", ar: "سلام", pr: "بِيس" },
+    { sec: 1, en: "war", ar: "حرب", pr: "وَور" },
+    { sec: 1, en: "friendship", ar: "صداقة", pr: "فْرِينْدْشِيب" },
+    { sec: 1, en: "youth, young people", ar: "الشباب", pr: "يُوث" },
+    { sec: 1, en: "the poor", ar: "الفقراء", pr: "ذَ بُور" },
+    { sec: 1, en: "poverty", ar: "فقر", pr: "بُوفَرْتِي" },
+    { sec: 1, en: "the rich", ar: "الأغنياء", pr: "ذَ رِيتْش" },
+    { sec: 1, en: "development", ar: "تطوير ، تنمية", pr: "دِيفِيلُبْمَنت" },
+    { sec: 1, en: "progress", ar: "تقدم", pr: "بْرُوغْرَس" },
+    { sec: 1, en: "achievement", ar: "إنجاز", pr: "أَتْشِيفْمَنت" },
+    { sec: 1, en: "efforts", ar: "جهود ، مجهودات", pr: "إِفَرْتْس" },
+    { sec: 1, en: "role", ar: "دور", pr: "رُول" },
+    { sec: 2, en: "economy", ar: "اقتصاد", pr: "إِيكُونُومِي" },
+    { sec: 2, en: "policy", ar: "سياسة", pr: "بُولِيسِي" },
+    { sec: 2, en: "cooperation", ar: "تعاون", pr: "كُوبِيرَيْشَن" },
+    { sec: 2, en: "treatment", ar: "معاملة", pr: "تْرِيتْمَنت" },
+    { sec: 2, en: "benefit", ar: "فائدة", pr: "بِينِيفِت" },
+    { sec: 2, en: "government", ar: "حكومة", pr: "جَاوَرْنْمَنت" },
+    { sec: 2, en: "noise", ar: "ضوضاء", pr: "نُويْز" },
+    { sec: 2, en: "effect , influence", ar: "تأثير", pr: "إِيفِكْت" },
+    { sec: 2, en: "production", ar: "انتاج", pr: "بْرُودَاكْشَن" },
+    { sec: 2, en: "system", ar: "نظام", pr: "سِيسْتَم" },
+    { sec: 2, en: "good manners", ar: "أخلاق حميدة", pr: "جُود مَانَرْز" },
+    { sec: 2, en: "advantage", ar: "ميزة", pr: "أَدْفَانْتِيدْج" },
+    { sec: 2, en: "disadvantage", ar: "عيب", pr: "دِيسْأَدْفَانْتِيدْج" },
+    { sec: 2, en: "encouragement", ar: "تشجيع", pr: "إِنْكَارِيدْجْمَنت" },
+    { sec: 2, en: "courage", ar: "شجاعة", pr: "كَارِيدْج" },
+    { sec: 2, en: "generation", ar: "جيل", pr: "جِينَرَيْشَن" },
+    { sec: 2, en: "safety and security", ar: "الأمن و الأمان", pr: "سَيْفْتِي أَنْد سِكْيُورِيتِي" },
+    { sec: 2, en: "illiteracy", ar: "الأمية", pr: "إِلِيتَرَاسِي" },
+    { sec: 2, en: "ignorance", ar: "الجهل", pr: "إِغْنُورَنْس" },
+    { sec: 2, en: "unemployment", ar: "البطالة", pr: "أَنْإِمْبْلُويْمَنت" },
+    { sec: 2, en: "knowledge", ar: "معرفة", pr: "نُولِيدْج" },
+    { sec: 2, en: "solution", ar: "حل", pr: "سُولُوشَن" },
+    { sec: 2, en: "happiness", ar: "سعادة", pr: "هَابِينَس" },
+    { sec: 2, en: "products", ar: "منتجات", pr: "بْرُودَاكْتْس" },
+    { sec: 2, en: "protection", ar: "حماية", pr: "بْرُوتِكْشَن" },
+    { sec: 2, en: "method", ar: "طريقة ، أسلوب", pr: "مِيثَد" },
+    { sec: 2, en: "prevention", ar: "وقاية", pr: "بْرِيفِنْشَن" },
+    { sec: 2, en: "means", ar: "وسيلة ، وسائل", pr: "مِينْز" },
+    { sec: 2, en: "population", ar: "السكان", pr: "بُوبْيُولَيْشَن" },
+    { sec: 2, en: "energy", ar: "طاقة", pr: "إِنَرْجِي" },
+    { sec: 2, en: "success", ar: "نجاح", pr: "سَكْسَس" },
+    { sec: 2, en: "failure", ar: "فشل", pr: "فَيْلْيَر" },
+    { sec: 2, en: "danger", ar: "خطر", pr: "دَيْنْجَر" },
+    { sec: 2, en: "starvation", ar: "الموت جوعاً", pr: "سْتَارْفَيْشَن" },
+    { sec: 2, en: "famine", ar: "قحط ، مجاعة", pr: "فَامِين" },
+    { sec: 2, en: "drought", ar: "جفاف", pr: "دْرَاوْت" },
+    { sec: 2, en: "facilities", ar: "تسهيلات ، انشاءات", pr: "فَسِيلِيتِيز" },
+    { sec: 2, en: "technology", ar: "تكنولوجيا", pr: "تَكْنُولُوجِي" },
+    { sec: 2, en: "step", ar: "خطوة", pr: "سْتَب" },
+    { sec: 2, en: "press", ar: "صحافة", pr: "بْرَس" }
   ];
 
   const grid = document.getElementById("grid");
@@ -1810,7 +1877,6 @@
   let rate = 1;
   let voices = [];
   let selectedVoice = null;
-  let pending = null;
 
   const voiceSelect = document.getElementById("voiceSelect");
 
@@ -1841,21 +1907,16 @@
       alert("متصفحك لا يدعم النطق الصوتي");
       return;
     }
-    if (pending) {
-      clearTimeout(pending);
-      pending = null;
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
     }
-    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US";
     if (selectedVoice) u.voice = selectedVoice;
     u.rate = rate;
     u.pitch = 1;
-    // Chrome bug: a small delay after cancel() makes speak() reliable.
-    pending = setTimeout(() => {
-      pending = null;
-      speechSynthesis.speak(u);
-    }, 80);
+    if (speechSynthesis.paused) speechSynthesis.resume();
+    speechSynthesis.speak(u);
   }
 
   speedBtns.forEach(btn => {
@@ -1918,18 +1979,45 @@
       });
       grid.appendChild(card);
     });
-    countEl.textContent = `${list.length} / ${words.length} كلمة`;
+    countEl.textContent = `${list.length} / ${activeWords().length} كلمة`;
     updateProgress();
   }
 
   let learnedFilter = "all";
+  let currentSection = null;
+
+  function activeWords() {
+    return currentSection ? words.filter(w => w.sec === currentSection) : words;
+  }
+
+  const sectionBtns = document.getElementById("sectionBtns");
+
+  function buildSectionBtns() {
+    sectionBtns.innerHTML = "";
+    const secs = [...new Set(words.map(w => w.sec))].sort((a, b) => a - b);
+    const mk = (label, val, key) => {
+      const b = document.createElement("button");
+      b.className = "section-btn" + (currentSection === val ? " active" : "");
+      b.textContent = label;
+      b.dataset.sec = key;
+      b.addEventListener("click", () => {
+        currentSection = val;
+        [...sectionBtns.children].forEach(x => x.classList.toggle("active", x.dataset.sec === key));
+        filterCards();
+      });
+      return b;
+    };
+    sectionBtns.appendChild(mk("📚 الكل", null, "all"));
+    secs.forEach(s => sectionBtns.appendChild(mk("الحصة " + s, s, String(s))));
+  }
 
   function filterCards() {
     const q = searchInput.value.trim().toLowerCase();
+    const pool = activeWords();
     let filtered = q
-      ? words.filter(w =>
+      ? pool.filter(w =>
           w.en.toLowerCase().includes(q) || w.ar.includes(q) || w.pr.includes(q))
-      : words.slice();
+      : pool.slice();
     if (learnedFilter === "learned") filtered = filtered.filter(w => learned.has(w.en));
     else if (learnedFilter === "notlearned") filtered = filtered.filter(w => !learned.has(w.en));
     render(filtered);
@@ -1947,6 +2035,8 @@
       filterCards();    });
   });
 
+  buildSectionBtns();
+
   const welcome = document.getElementById("welcome");
 
   let learned = new Set(JSON.parse(localStorage.getItem("learnedWords") || "[]"));
@@ -1959,9 +2049,10 @@
 
   function updateProgress() {
     progressBox.hidden = false;
-    const total = words.length;
-    const done = learned.size;
-    const pct = Math.round((done / total) * 100);
+    const total = activeWords().length;
+    const inSection = new Set(activeWords().map(w => w.en));
+    const done = [...learned].filter(en => inSection.has(en)).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
     barFill.style.width = pct + "%";
     learnedLabel.textContent = `حفظت ${done} من ${total} (${pct}%)`;
     remainingLabel.textContent = `متبقي ${total - done}`;
@@ -2077,7 +2168,7 @@
   }
 
   function startWritingQuiz() {
-    wQ = shuffle(words);
+    wQ = shuffle(activeWords());
     wIdx = 0;
     wScore = 0;
     renderWritingQuestion();
@@ -2088,7 +2179,13 @@
     showSections();
     const q = quizQ[quizIdx];
     testEn.textContent = q.en;
-    const distractors = shuffle(words.filter(w => w.en !== q.en)).slice(0, 3);
+    const pool = activeWords();
+    let distractors = shuffle(pool.filter(w => w.en !== q.en)).slice(0, 3);
+    if (distractors.length < 3) {
+      distractors = distractors.concat(
+        shuffle(words.filter(w => w.en !== q.en && !distractors.includes(w))).slice(0, 3 - distractors.length)
+      );
+    }
     const options = shuffle([q, ...distractors]);
     testOptions.innerHTML = "";
     options.forEach(opt => {
@@ -2224,7 +2321,7 @@
     testOverlay.hidden = false;
     testMode = modeBtns[0].classList.contains("active") ? "choice" : "writing";
     if (testMode === "choice") {
-      quizQ = shuffle(words);
+      quizQ = shuffle(activeWords());
       quizIdx = 0;
       quizScore = 0;
       renderQuestion();
@@ -2239,7 +2336,7 @@
       btn.classList.add("active");
       testMode = btn.dataset.testmode;
       if (testMode === "choice") {
-        quizQ = shuffle(words);
+        quizQ = shuffle(activeWords());
         quizIdx = 0;
         quizScore = 0;
         renderQuestion();
