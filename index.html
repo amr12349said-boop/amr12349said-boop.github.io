@@ -1339,6 +1339,37 @@
     transition: opacity .5s ease, visibility .5s ease;
   }
   .login-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .boot-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--card);
+    transition: opacity .3s ease, visibility .3s ease;
+  }
+  .boot-overlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .boot-spinner {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 5px solid var(--soft);
+    border-top-color: var(--primary);
+    animation: spin 0.9s linear infinite;
+  }
+  .boot-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 12px 32px var(--shadow);
+  }
+  .boot-title { font-weight: 800; color: var(--ink); font-size: 1.05rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .login-card {
     width: 100%;
     max-width: 400px;
@@ -1608,7 +1639,13 @@
   <button class="start-btn" id="startBtn">ابدأ التعلم 🚀</button>
 </div>
 
-<div class="login-overlay" id="loginOverlay">
+<div class="boot-overlay" id="bootOverlay">
+  <img class="boot-logo" src="photo.jpg" alt="مفردات" />
+  <div class="boot-spinner"></div>
+  <div class="boot-title">جاري تحميل الكلمات...</div>
+</div>
+
+<div class="login-overlay hide" id="loginOverlay">
   <div class="login-card">
     <div class="login-logo">📚</div>
     <h2 id="loginTitle">أهلًا بيك 👋</h2>
@@ -2795,7 +2832,13 @@
     authSubmit.textContent = isRegister ? "إنشاء حساب" : "تسجيل الدخول";
   }
 
+  const bootOverlay = document.getElementById("bootOverlay");
+  function hideBoot() {
+    bootOverlay.classList.add("hide");
+  }
+
   if (!fbReady) {
+    hideBoot();
     loginOverlay.classList.add("hide");
   } else {
     firebase.initializeApp(FIREBASE_CONFIG);
@@ -2843,6 +2886,7 @@
       if (user) {
         uid = user.uid;
         localStorage.removeItem("moraDev");
+        hideBoot();
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = user.email || "";
@@ -2850,6 +2894,7 @@
         await loadFromServer();
       } else if (localStorage.getItem("moraDev") === "1") {
         uid = null;
+        hideBoot();
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = "وضع المطور 👨‍💻";
@@ -2859,6 +2904,7 @@
         filterCards();
       } else {
         uid = null;
+        hideBoot();
         userBar.hidden = true;
         authEmail.value = "";
         authPass.value = "";
