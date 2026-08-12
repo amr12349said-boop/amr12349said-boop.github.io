@@ -1,0 +1,27 @@
+{
+  "name": "مفردات — الكلمات في حياتنا",
+  "short_name": "مفردات",
+  "description": "تعلّم كلمات إنجليزية بالعربي في حياتنا اليومية — بطاقات، اختبار اختيار من متعدد، واختبار كتابة.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#7c5cfc",
+  "theme_color": "#7c5cfc",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "photo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "photo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

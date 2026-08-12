@@ -4,7 +4,15 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="description" content="تعلّم كلمات إنجليزية بالعربي في حياتنا اليومية — بطاقات، اختبار اختيار من متعدد، واختبار كتابة." />
+<meta name="theme-color" content="#7c5cfc" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="مفردات" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="photo.jpg" />
 <link rel="canonical" href="https://amr12349said-boop.github.io/" />
+<link rel="icon" type="image/jpeg" href="photo.jpg" />
 <title>مفردات — الكلمات في حياتنا</title>
 <style>
   :root {
@@ -249,6 +257,11 @@
 
   @keyframes popIn {
     from { transform: scale(0); opacity: 0; }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
     to   { transform: scale(1); opacity: 1; }
   }
   @keyframes riseIn {
@@ -288,6 +301,18 @@
   .theme-toggle:hover { transform: rotate(15deg) scale(1.08); }
 
   header { text-align: center; margin-bottom: 22px; }
+
+  .site-logo {
+    display: inline-block;
+    width: 84px;
+    height: 84px;
+    border-radius: 24px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    box-shadow: 0 12px 32px var(--shadow);
+    border: 3px solid var(--card);
+    animation: popIn .4s ease both;
+  }
 
   header h1 {
     font-size: 2rem;
@@ -566,6 +591,16 @@
   .divider { height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--primary), var(--accent), transparent); }
 
   .arabic { font-size: 1rem; font-weight: 600; line-height: 1.5; }
+
+  .word-img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    background: var(--soft);
+    display: block;
+  }
 
   footer {
     text-align: center;
@@ -966,91 +1001,53 @@
     .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
   }
 
-  /* ---------- أقسام الموقع (شريط علوي) ---------- */
-  .sp-nav {
+  /* ---------- جدول المذاكرة (تصميم جديد) ---------- */
+  .sp-fab {
     position: fixed;
-    top: 0;
-    inset-inline-start: 0;
-    z-index: 60;
-    display: flex;
-    gap: 6px;
-    padding: 10px 12px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-inline-end: 1px solid var(--line);
-    border-top: none;
-    border-radius: 0 0 18px 18px;
-    box-shadow: 0 8px 24px var(--shadow);
-    max-width: 100vw;
-    overflow-x: auto;
-  }
-
-  .sp-tab {
+    bottom: 24px;
+    inset-inline-end: 24px;
+    z-index: 120;
+    width: 64px;
+    height: 64px;
     border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 9px 16px;
-    border-radius: 999px;
-    font-size: .92rem;
-    font-weight: 800;
-    background: transparent;
-    color: var(--muted);
-    white-space: nowrap;
-    transition: background .2s, color .2s, transform .15s;
-  }
-  .sp-tab:hover { background: var(--soft); color: var(--ink); transform: scale(1.03); }
-  .sp-tab.active {
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
-    box-shadow: 0 6px 14px var(--shadow);
-  }
-  .sp-tab.active.amber {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
-    color: #3b2a00;
-  }
-
-  .sp-nav .sp-add {
+    font-size: 1.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border: 2px dashed var(--line);
-    background: transparent;
-    color: var(--muted);
-    border-radius: 999px;
-    font-size: 1.1rem;
+    box-shadow: 0 12px 30px var(--shadow);
     cursor: pointer;
-    transition: all .2s;
+    transition: transform .2s, box-shadow .2s;
   }
-  .sp-nav .sp-add:hover { border-color: var(--primary); color: var(--primary); }
+  .sp-fab:hover { transform: scale(1.1) rotate(8deg); }
+  .sp-fab:active { transform: scale(.94); }
 
   .sp-panel {
     position: fixed;
     inset: 0;
     z-index: 140;
-    background: rgba(15, 10, 40, .55);
-    backdrop-filter: blur(8px);
+    background: rgba(13, 10, 30, .6);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
+    animation: fadeIn .25s ease both;
   }
   .sp-panel[hidden] { display: none; }
 
   .sp-card {
-    width: min(680px, 96vw);
+    width: min(520px, 98vw);
+    max-height: 94vh;
+    overflow-y: auto;
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 26px;
-    padding: 28px 24px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, .3);
-    animation: popIn .35s ease both;
-    text-align: center;
-    max-height: 90vh;
-    overflow-y: auto;
+    border-radius: 30px;
+    padding: 22px 22px 26px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
+    animation: popIn .35s cubic-bezier(.2, .9, .3, 1.3) both;
     position: relative;
   }
 
@@ -1058,131 +1055,216 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 6px;
+    margin-bottom: 14px;
   }
-
-  .sp-close {
-    border: none;
-    background: var(--soft);
-    color: var(--ink);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: background .2s;
-    flex-shrink: 0;
-  }
-  .sp-close:hover { background: #fee2e2; color: #dc2626; }
-
-  .sp-head {
+  .sp-brand {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .sp-title { font-size: 1.3rem; font-weight: 800; }
-
-  .sp-badge {
-    padding: 6px 14px;
-    border-radius: 999px;
+    gap: 9px;
+    font-size: 1.15rem;
     font-weight: 800;
-    font-size: .85rem;
+    color: var(--ink);
+  }
+  .sp-brand-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: #fff;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    font-size: 1.15rem;
+  }
+  .sp-close {
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sp-close:hover { background: #fee2e2; color: #dc2626; transform: rotate(90deg); }
+
+  .sp-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 5px;
+    background: var(--soft);
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .sp-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 800;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transition: all .25s;
     white-space: nowrap;
   }
-  .sp-badge.amber {
+  .sp-tab:hover { color: var(--ink); }
+  .sp-tab.active {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    color: #fff;
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+  .sp-tab.active.amber {
     background: linear-gradient(90deg, #f59e0b, #fbbf24);
     color: #3b2a00;
   }
 
-  .sp-timer {
-    margin-top: 18px;
-    font-size: clamp(3.2rem, 14vw, 5.5rem);
+  .sp-pane { text-align: center; animation: fadeIn .3s ease both; }
+  .sp-pane[hidden] { display: none; }
+
+  .sp-ring-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 4px auto 0;
+  }
+  .sp-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .sp-ring-bg { fill: none; stroke: var(--soft); stroke-width: 15; }
+  .sp-ring-fill {
+    fill: none;
+    stroke: var(--primary);
+    stroke-width: 15;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .4s ease, stroke .3s ease;
+  }
+  .sp-ring-wrap.amber .sp-ring-fill { stroke: #f59e0b; }
+
+  .sp-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .sp-phase {
+    font-size: .85rem;
     font-weight: 800;
-    letter-spacing: 3px;
+    color: var(--muted);
+    background: var(--soft);
+    padding: 5px 14px;
+    border-radius: 999px;
+  }
+  .sp-phase.amber { background: #fef3c7; color: #92400e; }
+  .sp-timer {
+    font-size: 2.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
     font-variant-numeric: tabular-nums;
     color: var(--ink);
-    text-align: center;
+    direction: ltr;
   }
-
-  .sp-bar {
-    height: 16px;
-    border-radius: 999px;
-    background: var(--soft);
-    overflow: hidden;
-    margin-top: 16px;
-  }
-  .sp-bar-fill {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    transition: width .4s ease, background .3s ease;
-  }
-  .sp-bar-fill.amber {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
-  }
-
-  .sp-info {
+  .sp-state {
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--muted);
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 14px;
+    align-items: center;
+    gap: 7px;
   }
-  .sp-info span {
+  .sp-state .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .sp-state.run .dot { background: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, .15); }
+  .sp-state.paused .dot { background: #f59e0b; }
+  .sp-state.stopped .dot { background: var(--muted); }
+
+  .sp-chips {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .sp-chips span {
     background: var(--soft);
-    padding: 6px 12px;
+    border: 1px solid var(--line);
+    padding: 7px 14px;
     border-radius: 999px;
-    font-size: .82rem;
+    font-size: .8rem;
     font-weight: 700;
     color: var(--ink);
   }
-  .sp-info b { color: var(--primary); }
+  .sp-chips b { color: var(--primary); }
+  .sp-pane.break .sp-chips b { color: #f59e0b; }
 
   .sp-controls {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
     justify-content: center;
-    margin-top: 16px;
+    gap: 12px;
+    margin-top: 18px;
   }
-
   .sp-btn {
     border: none;
     cursor: pointer;
-    padding: 14px 30px;
-    border-radius: 999px;
-    font-size: 1.02rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     font-weight: 800;
+    border-radius: 999px;
+    transition: transform .15s, box-shadow .2s, opacity .2s;
+    padding: 13px 26px;
+    font-size: .98rem;
     color: #fff;
     background: linear-gradient(90deg, var(--primary), var(--accent));
-    box-shadow: 0 6px 16px var(--shadow);
-    transition: transform .15s, opacity .2s;
+    box-shadow: 0 8px 20px var(--shadow);
   }
-  .sp-btn:hover:not(:disabled) { transform: scale(1.05); }
-  .sp-btn:active:not(:disabled) { transform: scale(.95); }
+  .sp-btn.round { border-radius: 50%; width: 54px; height: 54px; padding: 0; font-size: 1.15rem; }
+  .sp-btn.round.big { width: 66px; height: 66px; font-size: 1.35rem; }
+  .sp-btn.ghost { background: var(--soft); color: var(--ink); border: 2px solid var(--line); box-shadow: none; }
+  .sp-btn.danger { background: #fee2e2; color: #b91c1c; border: none; box-shadow: none; }
   .sp-btn:disabled { opacity: .45; cursor: default; }
-  .sp-btn.ghost {
-    background: var(--soft);
-    color: var(--ink);
-    border: 2px solid var(--line);
-    box-shadow: none;
-  }
-  .sp-btn.danger {
-    background: #fee2e2;
-    color: #b91c1c;
-    border: 2px solid #fecaca;
-    box-shadow: none;
-  }
+  .sp-btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.04); }
+  .sp-btn:active:not(:disabled) { transform: scale(.94); }
   .sp-btn.full { width: 100%; }
 
-  .sp-field { margin-top: 12px; text-align: right; }
+  .sp-motivate {
+    margin-top: 16px;
+    padding: 13px 16px;
+    border-radius: 16px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    font-size: .92rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .sp-motivate.amber {
+    border-color: #fcd34d;
+    background: linear-gradient(135deg, var(--soft), #fffbeb);
+    color: #78350f;
+  }
+
+  .sp-note { margin-top: 12px; font-size: .78rem; color: var(--muted); }
+
+  .sp-field { text-align: right; margin-bottom: 12px; }
   .sp-field label {
     display: block;
-    font-size: .85rem;
+    font-size: .83rem;
     font-weight: 700;
     color: var(--muted);
     margin-bottom: 6px;
@@ -1191,38 +1273,19 @@
     width: 100%;
     padding: 11px 14px;
     border: 2px solid var(--line);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--card);
     color: var(--ink);
     font-size: 1rem;
     outline: none;
-    transition: border-color .2s;
+    transition: border-color .2s, box-shadow .2s;
   }
-  .sp-field input:focus { border-color: var(--primary); }
-
-  .sp-note { margin-top: 14px; font-size: .8rem; color: var(--muted); text-align: center; }
-
-  .sp-motivate {
-    margin-top: 16px;
-    padding: 14px 18px;
-    border-radius: 16px;
-    background: var(--soft);
-    border: 2px solid var(--line);
-    font-size: .98rem;
-    font-weight: 700;
-    color: var(--ink);
-    text-align: center;
-    transition: border-color .3s, background .3s;
-  }
-  .sp-pane.amber .sp-motivate {
-    border-color: #fcd34d;
-    background: linear-gradient(135deg, var(--soft), #fffbeb);
+  .sp-field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
   }
 
-  .sp-check {
-    text-align: right;
-    margin-top: 12px;
-  }
+  .sp-check { text-align: right; margin: 4px 0 14px; }
   .sp-check label {
     display: flex;
     align-items: center;
@@ -1232,18 +1295,13 @@
     color: var(--ink);
     background: var(--soft);
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     border: 2px solid var(--line);
     transition: border-color .2s;
   }
   .sp-check label:hover { border-color: var(--primary); }
-  .sp-check input {
-    width: 19px;
-    height: 19px;
-    flex-shrink: 0;
-    accent-color: var(--primary);
-  }
+  .sp-check input { width: 19px; height: 19px; flex-shrink: 0; accent-color: var(--primary); }
 
   .sp-toast {
     position: fixed;
@@ -1584,6 +1642,7 @@
 <button class="theme-toggle" id="themeBtn" title="الوضع الليلي/النهاري">🌙</button>
 
 <header>
+  <img class="site-logo" src="photo.jpg" alt="مفردات" />
   <h1>مفردات — الكلمات في حياتنا</h1>
   <p>اضغط على زر السماعة 🔈 لسماع النطق، واختر سرعة الاستماع</p>
   <div class="controls">
@@ -1624,55 +1683,66 @@
   <div class="section-btns" id="sectionBtns"></div>
 </header>
 
-<nav class="sp-nav" id="spNav"></nav>
+<button class="sp-fab" id="spFab" title="جدول المذاكرة">⏱️</button>
 
 <div class="sp-panel" id="spPanel" hidden>
   <div class="sp-card">
     <div class="sp-topbar">
-      <span class="sp-title" id="spOverlayTitle">📚 وقت المذاكرة</span>
+      <div class="sp-brand"><span class="sp-brand-ico">⏱️</span> جدول المذاكرة</div>
       <button class="sp-close" id="spClose" title="إغلاق">✕</button>
     </div>
 
+    <div class="sp-tabs">
+      <button class="sp-tab active" data-tab="study">📚 <span>المذاكرة</span></button>
+      <button class="sp-tab" data-tab="break">☕ <span>الراحة</span></button>
+      <button class="sp-tab" data-tab="settings">⚙️ <span>الإعدادات</span></button>
+    </div>
+
     <div class="sp-pane" data-pane="study">
-      <div class="sp-head">
-        <div class="sp-title">📚 وقت المذاكرة</div>
-        <span class="sp-badge" id="spPhaseBadge">📚 وقت المذاكرة</span>
+      <div class="sp-ring-wrap" id="spStudyWrap">
+        <svg class="sp-ring" viewBox="0 0 220 220">
+          <circle class="sp-ring-bg" cx="110" cy="110" r="92"></circle>
+          <circle class="sp-ring-fill" id="spRingFill" cx="110" cy="110" r="92"></circle>
+        </svg>
+        <div class="sp-ring-center">
+          <div class="sp-phase" id="spPhaseBadge">📚 وقت المذاكرة</div>
+          <div class="sp-timer" id="spTimer">02:00</div>
+          <div class="sp-state stopped" id="spState"><span class="dot"></span><span id="spStateText">جاهز للبدء</span></div>
+        </div>
       </div>
-      <div class="sp-timer" id="spTimer">02:00:00</div>
-      <div class="sp-bar"><div class="sp-bar-fill" id="spBar"></div></div>
-      <div class="sp-info">
+      <div class="sp-chips">
         <span>الجلسة <b id="spSession">1</b></span>
-        <span>التالي <b id="spNext">☕ وقت الراحة</b></span>
-        <span>الحالة <b id="spState">متوقف</b></span>
+        <span>التالي <b id="spNext">☕ الراحة</b></span>
       </div>
       <div class="sp-controls">
-        <button class="sp-btn" id="spStartBtn">▶️ بدء</button>
-        <button class="sp-btn ghost" id="spPauseBtn">⏸️ إيقاف</button>
-        <button class="sp-btn danger" id="spResetBtn">🔄 تصفير</button>
+        <button class="sp-btn round danger" id="spResetBtn" title="تصفير">↺</button>
+        <button class="sp-btn round big" id="spStartBtn" title="بدء">▶</button>
+        <button class="sp-btn round ghost" id="spPauseBtn" title="إيقاف مؤقت">⏸</button>
       </div>
       <div class="sp-motivate" id="spMotivate">💪 ركّز! كل دقيقة بتقرّبك من هدفك</div>
-      <div class="sp-note">الجرس بيقرع تلقائيًا عند بداية كل مرحلة 🔔</div>
     </div>
 
-    <div class="sp-pane" data-pane="break">
-      <div class="sp-head">
-        <div class="sp-title">☕ وقت الراحة</div>
-        <span class="sp-badge amber" id="spBreakBadge">☕ وقت الراحة</span>
+    <div class="sp-pane break" data-pane="break">
+      <div class="sp-ring-wrap amber" id="spBreakWrap">
+        <svg class="sp-ring" viewBox="0 0 220 220">
+          <circle class="sp-ring-bg" cx="110" cy="110" r="92"></circle>
+          <circle class="sp-ring-fill" id="spBreakRingFill" cx="110" cy="110" r="92"></circle>
+        </svg>
+        <div class="sp-ring-center">
+          <div class="sp-phase amber" id="spBreakBadge">☕ وقت الراحة</div>
+          <div class="sp-timer" id="spBreakTimer">00:30</div>
+          <div class="sp-state stopped" id="spBreakState"><span class="dot"></span><span id="spBreakStateText">استمتع بالراحة</span></div>
+        </div>
       </div>
-      <div class="sp-timer" id="spBreakTimer">00:30:00</div>
-      <div class="sp-bar"><div class="sp-bar-fill amber" id="spBreakBar"></div></div>
-      <div class="sp-info">
+      <div class="sp-chips">
         <span>راحة رقم <b id="spBreakCount">0</b></span>
-        <span>التالي <b id="spBreakNext">📚 وقت المذاكرة</b></span>
+        <span>التالي <b id="spBreakNext">📚 المذاكرة</b></span>
       </div>
-      <div class="sp-motivate" id="spBreakMotivate">☕ خد نفس عميق، انت تستاهل الراحة</div>
-      <div class="sp-note" id="spBreakNote">لما تخلص المذاكرة، الجرس هيقرع ويبدأ وقت الراحة ☕</div>
+      <div class="sp-motivate amber" id="spBreakMotivate">☕ خد نفس عميق، انت تستاهل الراحة</div>
+      <div class="sp-note" id="spBreakNote">الجرس هيقرع لما يبدأ وقت المذاكرة 📚</div>
     </div>
 
-    <div class="sp-pane" data-pane="settings" hidden>
-      <div class="sp-head">
-        <div class="sp-title">⚙️ الإعدادات</div>
-      </div>
+    <div class="sp-pane" data-pane="settings">
       <div class="sp-field">
         <label for="spStudyMin">مدة المذاكرة (دقيقة)</label>
         <input type="number" id="spStudyMin" min="1" max="600" value="120" />
@@ -1687,9 +1757,11 @@
           🧠 الوضع الذكي: احسب وقت الراحة تلقائيًا (ربع المذاكرة)
         </label>
       </div>
-      <button class="sp-btn full" id="spApplyBtn" style="margin-top:14px">تطبيق التغييرات</button>
-      <button class="sp-btn ghost full" id="spBellBtn" style="margin-top:10px">🔔 كتم / تشغيل الجرس</button>
-      <button class="sp-btn ghost full" id="spTestBtn" style="margin-top:10px">جرب الجرس</button>
+      <button class="sp-btn full" id="spApplyBtn">💾 حفظ الإعدادات</button>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="sp-btn ghost full" id="spBellBtn">🔔 كتم الجرس</button>
+        <button class="sp-btn ghost full" id="spTestBtn">🔊 جرب الجرس</button>
+      </div>
       <div class="sp-note">التغييرات بتتحفظ تلقائيًا وبتتطبق من الجلسة الجاية</div>
     </div>
   </div>
@@ -1945,6 +2017,38 @@
     applyTheme(!document.body.classList.contains("dark"));
   });
 
+  function slugName(str) {
+    return String(str).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+
+  function attachWordImg(card, w) {
+    if (w.img) {
+      const im = document.createElement("img");
+      im.className = "word-img";
+      im.alt = w.en;
+      im.loading = "lazy";
+      im.src = w.img;
+      card.insertBefore(im, card.firstChild);
+      return;
+    }
+    const base = slugName(w.en);
+    const exts = ["jpg", "jpeg", "png", "webp", "gif", "avif"];
+    const img = document.createElement("img");
+    img.className = "word-img";
+    img.alt = w.en;
+    img.loading = "lazy";
+    let i = 0;
+    function tryNext() {
+      if (i >= exts.length) { img.remove(); return; }
+      img.src = "img/" + base + "." + exts[i++];
+    }
+    img.addEventListener("load", () => {
+      card.insertBefore(img, card.firstChild);
+    });
+    img.addEventListener("error", tryNext);
+    tryNext();
+  }
+
   function render(list) {
     grid.innerHTML = "";
     list.forEach((w, i) => {
@@ -1961,6 +2065,7 @@
         `<div class="divider"></div>` +
         `<div class="arabic">${w.ar}</div>` +
         `<button class="learned-btn${isLearned ? " checked" : ""}">${isLearned ? "✅ حفظتها" : "لم أحفظها بعد"}</button>`;
+      attachWordImg(card, w);
       card.querySelector(".speak-btn").addEventListener("click", () => speak(w.en));
       card.querySelector(".learned-btn").addEventListener("click", () => {
         if (learned.has(w.en)) learned.delete(w.en);
@@ -2365,48 +2470,24 @@
     testOverlay.hidden = true;
   });
 
-  /* ---------- جدول المذاكرة ---------- */
+  /* ---------- جدول المذاكرة (تصميم جديد) ---------- */
   let studyMin = parseInt(localStorage.getItem("spStudyMin") || "", 10);
   if (!studyMin || studyMin < 1) studyMin = 120;
   let breakMin = parseInt(localStorage.getItem("spBreakMin") || "", 10);
   if (!breakMin || breakMin < 1) breakMin = 30;
   let smartBreak = localStorage.getItem("spSmartBreak") !== "off";
 
-  const sections = [
-    { id: "study", icon: "📚", label: "وقت المذاكرة" },
-    { id: "break", icon: "☕", label: "وقت الراحة" },
-    { id: "settings", icon: "⚙️", label: "الإعدادات" }
-  ];
-
-  const spNav = document.getElementById("spNav");
-  sections.forEach(s => {
-    const b = document.createElement("button");
-    b.className = "sp-tab" + (s.id === "study" ? " active" : "");
-    b.dataset.tab = s.id;
-    b.textContent = s.icon + " " + s.label;
-    b.title = s.label;
-    spNav.appendChild(b);
-  });
-  const addBtn = document.createElement("button");
-  addBtn.className = "sp-add";
-  addBtn.title = "إضافة قسم جديد مستقبلًا";
-  addBtn.textContent = "+";
-  spNav.appendChild(addBtn);
-
+  const spFab = document.getElementById("spFab");
   const spPanel = document.getElementById("spPanel");
   const spClose = document.getElementById("spClose");
-  const spOverlayTitle = document.getElementById("spOverlayTitle");
   const spTabs = document.querySelectorAll(".sp-tab");
   const spPanes = document.querySelectorAll(".sp-pane");
-
   const spTimer = document.getElementById("spTimer");
-  const spBar = document.getElementById("spBar");
+  const spBreakTimer = document.getElementById("spBreakTimer");
+  const spPhaseBadge = document.getElementById("spPhaseBadge");
+  const spBreakBadge = document.getElementById("spBreakBadge");
   const spSession = document.getElementById("spSession");
   const spNext = document.getElementById("spNext");
-  const spState = document.getElementById("spState");
-  const spPhaseBadge = document.getElementById("spPhaseBadge");
-  const spBreakTimer = document.getElementById("spBreakTimer");
-  const spBreakBar = document.getElementById("spBreakBar");
   const spBreakCount = document.getElementById("spBreakCount");
   const spBreakNext = document.getElementById("spBreakNext");
   const spBreakNote = document.getElementById("spBreakNote");
@@ -2421,6 +2502,12 @@
   const spApplyBtn = document.getElementById("spApplyBtn");
   const spMotivate = document.getElementById("spMotivate");
   const spBreakMotivate = document.getElementById("spBreakMotivate");
+  const spRingFill = document.getElementById("spRingFill");
+  const spBreakRingFill = document.getElementById("spBreakRingFill");
+  const spState = document.getElementById("spState");
+  const spStateText = document.getElementById("spStateText");
+  const spBreakState = document.getElementById("spBreakState");
+  const spBreakStateText = document.getElementById("spBreakStateText");
 
   const motivStudy = [
     "💪 ركّز! كل دقيقة بتقرّبك من هدفك",
@@ -2488,12 +2575,12 @@
   if (!sp.endAt || sp.endAt < Date.now()) sp.endAt = Date.now() + phaseLenSec(sp.phase) * 1000;
 
   const fmt = s => {
-    s = Math.max(0, s);
+    s = Math.max(0, Math.round(s));
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
-    const x = Math.floor(s % 60);
+    const x = s % 60;
     const p = n => String(n).padStart(2, "0");
-    return `${p(h)}:${p(m)}:${p(x)}`;
+    return h > 0 ? `${p(h)}:${p(m)}:${p(x)}` : `${p(m)}:${p(x)}`;
   };
 
   let toastTimer = null;
@@ -2511,11 +2598,52 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 4000);
   }
 
-  const overlayTitles = {
-    study: "📚 وقت المذاكرة",
-    break: "☕ وقت الراحة",
-    settings: "⚙️ الإعدادات"
-  };
+  const RING_C = 2 * Math.PI * 92;
+
+  function setRing(el, pct) {
+    el.style.strokeDasharray = RING_C;
+    el.style.strokeDashoffset = RING_C * (1 - pct / 100);
+  }
+
+  function renderSp() {
+    const now = Date.now();
+    const remain = sp.endAt > now ? (sp.endAt - now) / 1000 : 0;
+    const total = phaseLenSec(sp.phase);
+    const elapsed = total - remain;
+    const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+    const isStudy = sp.phase === "study";
+    const phaseName = isStudy ? "📚 وقت المذاكرة" : "☕ وقت الراحة";
+    const nextName = isStudy ? "☕ الراحة" : "📚 المذاكرة";
+
+    spPhaseBadge.textContent = phaseName;
+    spBreakBadge.textContent = phaseName;
+    spTimer.textContent = fmt(remain);
+    spBreakTimer.textContent = fmt(remain);
+    setRing(spRingFill, pct);
+    setRing(spBreakRingFill, pct);
+
+    spSession.textContent = sp.session;
+    spNext.textContent = nextName;
+    spBreakCount.textContent = sp.breakCount;
+    spBreakNext.textContent = nextName;
+
+    if (isStudy) {
+      spMotivate.textContent = motivStudy[sp.session % motivStudy.length];
+    } else {
+      spBreakMotivate.textContent = motivBreak[sp.breakCount % motivBreak.length];
+    }
+
+    const stateClass = sp.running ? "run" : (sp.endAt <= now ? "stopped" : "paused");
+    const stateLabel = sp.running ? "جارٍ التشغيل" : (sp.endAt <= now ? "جاهز للبدء" : "متوقف مؤقتًا");
+    spState.className = "sp-state " + stateClass;
+    spBreakState.className = "sp-state " + stateClass;
+    spStateText.textContent = stateLabel;
+    spBreakStateText.textContent = stateLabel;
+
+    spStartBtn.disabled = sp.running;
+    spPauseBtn.disabled = !sp.running;
+  }
 
   function activateTab(name) {
     spTabs.forEach(b => {
@@ -2526,47 +2654,22 @@
       p.hidden = p.dataset.pane !== name;
       p.classList.toggle("amber", p.dataset.pane === "break");
     });
-    spOverlayTitle.textContent = overlayTitles[name];
     spPanel.hidden = false;
   }
 
-  spTabs.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
-  spClose.addEventListener("click", () => spPanel.hidden = true);
-
-  function renderSp() {
-    const now = Date.now();
-    const remain = sp.endAt > now ? (sp.endAt - now) / 1000 : 0;
-    const total = phaseLenSec(sp.phase);
-    const elapsed = total - remain;
-    const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-
-    const isStudy = sp.phase === "study";
-
-    spPhaseBadge.textContent = isStudy ? "📚 وقت المذاكرة" : "☕ وقت الراحة";
-    spPhaseBadge.classList.toggle("amber", !isStudy);
-    spTimer.textContent = fmt(remain);
-    spBar.style.width = pct + "%";
-    spSession.textContent = sp.session;
-    spNext.textContent = isStudy ? "☕ وقت الراحة" : "📚 وقت المذاكرة";
-    spState.textContent = sp.running ? "جارٍ التشغيل" : "متوقف";
-    spState.style.color = sp.running ? "#10b981" : "";
-    spStartBtn.disabled = sp.running;
-    spPauseBtn.disabled = !sp.running;
-
-    spBreakCount.textContent = sp.breakCount;
-    spBreakNext.textContent = "📚 وقت المذاكرة";
-    if (isStudy) {
-      spBreakTimer.textContent = fmt(remain);
-      spBreakBar.style.width = pct + "%";
-      spBreakNote.textContent = "متبقي على وقت الراحة — الجرس هيقرع ويبدأ الوقت ده من غير ما تعمل حاجة ☕";
-      spMotivate.textContent = motivStudy[sp.session % motivStudy.length];
-    } else {
-      spBreakTimer.textContent = fmt(remain);
-      spBreakBar.style.width = pct + "%";
-      spBreakNote.textContent = "استمتع بالراحة! الجرس هيقرع لما يبدأ وقت المذاكرة 📚";
-      spBreakMotivate.textContent = motivBreak[sp.breakCount % motivBreak.length];
+  spFab.addEventListener("click", () => {
+    spPanel.hidden = !spPanel.hidden;
+    if (!spPanel.hidden) {
+      const current = [...spTabs].find(b => b.classList.contains("active"));
+      if (current) activateTab(current.dataset.tab);
+      renderSp();
     }
-  }
+  });
+  spClose.addEventListener("click", () => spPanel.hidden = true);
+  spTabs.forEach(btn => btn.addEventListener("click", () => activateTab(btn.dataset.tab)));
+  spPanel.addEventListener("click", e => {
+    if (e.target === spPanel) spPanel.hidden = true;
+  });
 
   spStartBtn.addEventListener("click", () => {
     sp.running = true;
@@ -2591,14 +2694,15 @@
     sp.endAt = Date.now() + studyMin * 60 * 1000;
     saveSp();
     renderSp();
+    showToast("🔄 تم تصفير الجدول", "study");
   });
 
   spBellBtn.addEventListener("click", () => {
     bellOn = !bellOn;
     localStorage.setItem("spBell", bellOn ? "on" : "off");
-    spBellBtn.textContent = (bellOn ? "🔔" : "🔕") + " كتم / تشغيل الجرس";
+    spBellBtn.textContent = (bellOn ? "🔔" : "🔕") + " " + (bellOn ? "كتم الجرس" : "تشغيل الجرس");
   });
-  if (!bellOn) spBellBtn.textContent = "🔕 كتم / تشغيل الجرس";
+  if (!bellOn) spBellBtn.textContent = "🔕 تشغيل الجرس";
 
   spTestBtn.addEventListener("click", () => ringBell("study"));
 
@@ -2650,6 +2754,8 @@
   }, 1000);
 
   renderSp();
+
+  render(words);
 
   render(words);
 
@@ -2850,6 +2956,10 @@
   privacyOverlay.addEventListener("click", e => {
     if (e.target === privacyOverlay) privacyOverlay.hidden = true;
   });
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 </script>
 
 </body>
