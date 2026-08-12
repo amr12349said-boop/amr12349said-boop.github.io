@@ -537,26 +537,59 @@
     gap: 8px;
   }
 
-  /* وضع الاختبار: إخفاء الإنجليزية */
-  body.study-mode .card .english,
-  body.study-mode .card .pronounce,
-  body.study-mode .card .speak-btn {
-    display: none;
-  }
+  /* قلب البطاقة (Flip Card) */
+  .card-inner { display: contents; }
 
-  body.study-mode .card { cursor: pointer; }
-
-  body.study-mode .card.revealed .english,
-  body.study-mode .card.revealed .pronounce,
-  body.study-mode .card.revealed .speak-btn {
+  .card-face {
     display: flex;
+    flex-direction: column;
+    gap: 7px;
   }
-  body.study-mode .card.revealed .pronounce { display: block; }
+  .card-back { display: none; }
 
-  body.study-mode .card.revealed {
+  .card.flipped .card-face.card-front { display: none; }
+  .card.flipped .card-face.card-back { display: flex; }
+
+  .card .hint {
+    margin-top: 2px;
+    font-size: .72rem;
+    color: var(--muted);
+    opacity: .8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .card.flipped {
     border-color: var(--primary);
     box-shadow: 0 10px 26px var(--shadow);
   }
+  .card.flipped::before {
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+  }
+  .card.speaking {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent), 0 12px 30px var(--shadow);
+    transform: translateY(-3px);
+  }
+  .card.speaking::before {
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent), #f59e0b, var(--accent));
+    background-size: 200% 100%;
+    animation: speakPulse 1s linear infinite;
+  }
+  @keyframes speakPulse { from { background-position: 0 0; } to { background-position: 200% 0; } }
+  .card .flip-ico {
+    font-size: .8rem;
+    opacity: .7;
+  }
+
+  /* وضع الاختبار: البطاقات تبدأ مقلوبة (العربية ظاهرة) */
+  body.study-mode .card { cursor: pointer; }
+  body.study-mode .card:not(.flipped) .card-front { display: none; }
+  body.study-mode .card:not(.flipped) .card-back { display: flex; }
+  body.study-mode .card.flipped .card-front { display: flex; }
+  body.study-mode .card.flipped .card-back { display: none; }
 
   .card .english {
     font-size: 1.02rem;
@@ -1325,6 +1358,115 @@
   .sp-toast.study { background: linear-gradient(90deg, var(--primary), var(--accent)); }
   .sp-toast.break { background: linear-gradient(90deg, #f59e0b, #fbbf24); color: #3b2a00; }
 
+  /* ---------- أزرار المميزات الجديدة ---------- */
+  .feature-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 14px;
+  }
+  .feature-btn {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feature-btn:hover { border-color: var(--primary); color: var(--primary); transform: scale(1.04); }
+  .feature-btn.on {
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+  .feature-badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #f43f5e;
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* لوحة المراجعة */
+  .review-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; max-height: 46vh; overflow-y: auto; }
+  .review-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    text-align: right;
+  }
+  .review-item .rw-en { font-weight: 800; color: var(--ink); direction: ltr; }
+  .review-item .rw-ar { font-size: .85rem; color: var(--muted); }
+  .review-item .rw-side { display: flex; align-items: center; gap: 8px; }
+  .review-item .rw-done {
+    border: none;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: .8rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .3);
+    transition: transform .15s;
+  }
+  .review-item .rw-done:hover { transform: scale(1.06); }
+  .review-empty { margin-top: 16px; text-align: center; font-size: .92rem; font-weight: 700; color: #10b981; }
+
+  /* لوحة الإحصائيات */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .stat-tile {
+    border-radius: 18px;
+    padding: 16px 12px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    text-align: center;
+  }
+  .stat-tile .st-num { font-size: 1.8rem; font-weight: 800; color: var(--ink); }
+  .stat-tile .st-lbl { font-size: .78rem; color: var(--muted); font-weight: 700; margin-top: 4px; }
+  .stat-tile.fire .st-num { background: linear-gradient(90deg, #f97316, #f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stats-chart { margin-top: 18px; }
+  .stats-chart .sc-title { font-size: .82rem; font-weight: 800; color: var(--muted); margin-bottom: 10px; text-align: center; }
+  .sc-bars { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; height: 90px; }
+  .sc-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; height: 100%; }
+  .sc-bar {
+    width: 100%;
+    border-radius: 8px 8px 3px 3px;
+    background: linear-gradient(180deg, var(--primary), var(--accent));
+    opacity: .85;
+    min-height: 4px;
+    transition: height .4s ease;
+  }
+  .sc-bar.zero { background: var(--line); opacity: 1; }
+  .sc-bar.today { box-shadow: 0 0 0 2px var(--primary); }
+  .sc-day { font-size: .68rem; color: var(--muted); font-weight: 700; }
+  .sc-empty { text-align: center; color: var(--muted); font-size: .85rem; padding: 16px 0; font-weight: 700; }
+
   /* ---------- تسجيل الدخول ---------- */
   .login-overlay {
     position: fixed;
@@ -1718,6 +1860,11 @@
     <button class="filter-btn" id="filterNotLearned" data-filter="notlearned">⭕ لم أحفظهم</button>
   </div>
   <div class="section-btns" id="sectionBtns"></div>
+  <div class="feature-btns">
+    <button class="feature-btn" id="reviewBtn" title="راجع الكلمات اللي فات عليها وقت">🔁 مراجعة المنسي <span class="feature-badge" id="reviewBadge" hidden>0</span></button>
+    <button class="feature-btn" id="listenBtn" title="استمع لكل الكلمات بالترتيب">🔈 استماع متواصل</button>
+    <button class="feature-btn" id="statsBtn" title="إحصائيات التقدم">📊 إحصائياتي</button>
+  </div>
 </header>
 
 <button class="sp-fab" id="spFab" title="جدول المذاكرة">⏱️</button>
@@ -1801,6 +1948,32 @@
       </div>
       <div class="sp-note">التغييرات بتتحفظ تلقائيًا وبتتطبق من الجلسة الجاية</div>
     </div>
+  </div>
+</div>
+
+<!-- 🔁 مراجعة المنسي -->
+<div class="sp-panel" id="reviewPanel" hidden>
+  <div class="sp-card">
+    <div class="sp-topbar">
+      <div class="sp-brand"><span class="sp-brand-ico">🔁</span> مراجعة المنسي</div>
+      <button class="sp-close" id="reviewClose" title="إغلاق">✕</button>
+    </div>
+    <p class="sp-note">كلمات حفظتها قبل كده ومرّ عليها وقت — راجعها عشان تتثبت. لو كتبت الكلمة عربي من غير ما تحفظها، مش هتظهر هنا.</p>
+    <div class="review-list" id="reviewList"></div>
+    <div class="review-empty" id="reviewEmpty">🎉 مفيش كلمات مستنية مراجعة دلوقتي — كل حاجة محفوظة وحديثة!</div>
+    <button class="sp-btn full" id="reviewAllBtn">✅ أراجعهم كلهم الآن</button>
+  </div>
+</div>
+
+<!-- 📊 إحصائياتي -->
+<div class="sp-panel" id="statsPanel" hidden>
+  <div class="sp-card">
+    <div class="sp-topbar">
+      <div class="sp-brand"><span class="sp-brand-ico">📊</span> إحصائياتي</div>
+      <button class="sp-close" id="statsClose" title="إغلاق">✕</button>
+    </div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="stats-chart" id="statsChart"></div>
   </div>
 </div>
 
@@ -2059,13 +2232,14 @@
   }
 
   function attachWordImg(card, w) {
+    const front = card.querySelector(".card-front");
     if (w.img) {
       const im = document.createElement("img");
       im.className = "word-img";
       im.alt = w.en;
       im.loading = "lazy";
       im.src = w.img;
-      card.insertBefore(im, card.firstChild);
+      front.insertBefore(im, front.firstChild);
       return;
     }
     const base = slugName(w.en);
@@ -2080,7 +2254,7 @@
       img.src = "img/" + base + "." + exts[i++];
     }
     img.addEventListener("load", () => {
-      card.insertBefore(img, card.firstChild);
+      front.insertBefore(img, front.firstChild);
     });
     img.addEventListener("error", tryNext);
     tryNext();
@@ -2094,30 +2268,37 @@
       card.style.setProperty("--i", Math.min(i, 14));
       const isLearned = learned.has(w.en);
       card.innerHTML =
-        `<div class="top">` +
-          `<div class="english">${w.en}</div>` +
-          `<button class="speak-btn" title="استمع إلى النطق">🔈</button>` +
+        `<div class="card-face card-front">` +
+          `<div class="top">` +
+            `<div class="english">${w.en}</div>` +
+            `<button class="speak-btn" title="استمع إلى النطق">🔈</button>` +
+          `</div>` +
+          `<div class="pronounce">النطق: <b>${w.pr}</b></div>` +
+          `<div class="hint"><span class="flip-ico">👆</span> اضغط للكشف عن المعنى</div>` +
         `</div>` +
-        `<div class="pronounce">النطق: <b>${w.pr}</b></div>` +
-        `<div class="divider"></div>` +
-        `<div class="arabic">${w.ar}</div>` +
-        `<button class="learned-btn${isLearned ? " checked" : ""}">${isLearned ? "✅ حفظتها" : "لم أحفظها بعد"}</button>`;
+        `<div class="card-face card-back">` +
+          `<div class="arabic">${w.ar}</div>` +
+          `<button class="learned-btn${isLearned ? " checked" : ""}">${isLearned ? "✅ حفظتها" : "لم أحفظها بعد"}</button>` +
+        `</div>`;
       attachWordImg(card, w);
-      card.querySelector(".speak-btn").addEventListener("click", () => speak(w.en));
-      card.querySelector(".learned-btn").addEventListener("click", () => {
-        if (learned.has(w.en)) learned.delete(w.en);
-        else learned.add(w.en);
+      card.querySelector(".speak-btn").addEventListener("click", e => {
+        e.stopPropagation();
+        speak(w.en);
+      });
+      card.querySelector(".learned-btn").addEventListener("click", e => {
+        e.stopPropagation();
+        if (learned.has(w.en)) { learned.delete(w.en); unmarkLearnedTime(w.en); unbumpToday(); }
+        else { learned.add(w.en); markLearnedTime(w.en); bumpToday(); }
         localStorage.setItem("learnedWords", JSON.stringify([...learned]));
         if (typeof pushLearned === "function") pushLearned();
         updateProgress();
+        updateReviewBadge();
         card.querySelector(".learned-btn").textContent = learned.has(w.en) ? "✅ حفظتها" : "لم أحفظها بعد";
         card.querySelector(".learned-btn").classList.toggle("checked", learned.has(w.en));
         filterCards();
       });
-      card.addEventListener("click", e => {
-        if (!studyMode) return;
-        if (e.target.closest(".speak-btn") || e.target.closest(".learned-btn")) return;
-        card.classList.toggle("revealed");
+      card.addEventListener("click", () => {
+        card.classList.toggle("flipped");
       });
       grid.appendChild(card);
     });
@@ -2198,6 +2379,7 @@
     barFill.style.width = pct + "%";
     learnedLabel.textContent = `حفظت ${done} من ${total} (${pct}%)`;
     remainingLabel.textContent = `متبقي ${total - done}`;
+    if (typeof updateReviewBadge === "function") updateReviewBadge();
   }
 
   const studyBtn = document.getElementById("studyBtn");
@@ -2208,7 +2390,7 @@
     studyBtn.classList.toggle("on", studyMode);
     studyBtn.textContent = studyMode ? "🎯 وضع الاختبار: مفعّل" : "🎯 وضع الاختبار";
     if (!studyMode) {
-      grid.querySelectorAll(".card.revealed").forEach(c => c.classList.remove("revealed"));
+      grid.querySelectorAll(".card.flipped").forEach(c => c.classList.remove("flipped"));
     }
   });
 
@@ -2707,6 +2889,255 @@
   spPanel.addEventListener("click", e => {
     if (e.target === spPanel) spPanel.hidden = true;
   });
+
+  /* ========== 🔁 مراجعة المنسي ========== */
+  const REVIEW_DAYS = 3;
+  const reviewPanel = document.getElementById("reviewPanel");
+  const reviewList = document.getElementById("reviewList");
+  const reviewEmpty = document.getElementById("reviewEmpty");
+  const reviewBadge = document.getElementById("reviewBadge");
+  const reviewAllBtn = document.getElementById("reviewAllBtn");
+
+  function loadReviews() {
+    try { return JSON.parse(localStorage.getItem("reviewTimes") || "{}"); }
+    catch (e) { return {}; }
+  }
+  function saveReviews(r) {
+    try { localStorage.setItem("reviewTimes", JSON.stringify(r)); } catch (e) {}
+  }
+
+  function markLearnedTime(en) {
+    const r = loadReviews();
+    r[en] = Date.now();
+    saveReviews(r);
+  }
+  function unmarkLearnedTime(en) {
+    const r = loadReviews();
+    if (en in r) { delete r[en]; saveReviews(r); }
+  }
+
+  function dueReviewWords() {
+    const r = loadReviews();
+    const now = Date.now();
+    const cutoff = REVIEW_DAYS * 24 * 60 * 60 * 1000;
+    const map = new Map(words.map(w => [w.en, w]));
+    return [...learned]
+      .filter(en => {
+        const t = r[en];
+        if (!t) return true;
+        return now - t >= cutoff;
+      })
+      .map(en => map.get(en))
+      .filter(Boolean);
+  }
+
+  function updateReviewBadge() {
+    const n = dueReviewWords().length;
+    reviewBadge.hidden = n === 0;
+    reviewBadge.textContent = n;
+  }
+
+  function renderReviewList() {
+    const due = dueReviewWords();
+    reviewList.innerHTML = "";
+    reviewEmpty.hidden = due.length > 0;
+    reviewAllBtn.hidden = due.length === 0;
+    due.forEach(w => {
+      const item = document.createElement("div");
+      item.className = "review-item";
+      item.innerHTML =
+        `<div>` +
+          `<div class="rw-en">${w.en}</div>` +
+          `<div class="rw-ar">${w.ar}</div>` +
+        `</div>` +
+        `<div class="rw-side">` +
+          `<button class="speak-btn" title="استمع">🔈</button>` +
+          `<button class="rw-done">أراجعها ✅</button>` +
+        `</div>`;
+      item.querySelector(".speak-btn").addEventListener("click", () => speak(w.en));
+      item.querySelector(".rw-done").addEventListener("click", () => {
+        markLearnedTime(w.en);
+        renderReviewList();
+        updateReviewBadge();
+        showToast("✅ اتسجلت مراجعة «" + w.en + "»", "study");
+      });
+      reviewList.appendChild(item);
+    });
+  }
+
+  document.getElementById("reviewBtn").addEventListener("click", () => {
+    renderReviewList();
+    reviewPanel.hidden = false;
+  });
+  document.getElementById("reviewClose").addEventListener("click", () => reviewPanel.hidden = true);
+  reviewPanel.addEventListener("click", e => {
+    if (e.target === reviewPanel) reviewPanel.hidden = true;
+  });
+  reviewAllBtn.addEventListener("click", () => {
+    dueReviewWords().forEach(w => markLearnedTime(w.en));
+    renderReviewList();
+    updateReviewBadge();
+    showToast("🎉 راجعت كل الكلمات — استمر!", "study");
+  });
+
+  /* ========== 🔈 استماع متواصل ========== */
+  const listenBtn = document.getElementById("listenBtn");
+  let listenQueue = [];
+  let listenIdx = 0;
+  let listening = false;
+  let listenStopped = false;
+
+  function stopListening() {
+    listening = false;
+    listenStopped = true;
+    listenBtn.classList.remove("on");
+    listenBtn.textContent = "🔈 استماع متواصل";
+    grid.querySelectorAll(".card.speaking").forEach(c => c.classList.remove("speaking"));
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+  }
+
+  function startListening() {
+    const pool = currentSection ? words.filter(w => w.sec === currentSection) : words;
+    listenQueue = pool.filter(w => !learned.has(w.en) || true);
+    listenIdx = 0;
+    listenStopped = false;
+    listening = true;
+    listenBtn.classList.add("on");
+    listenBtn.textContent = "⏹ إيقاف الاستماع";
+    playNextInQueue();
+  }
+
+  function playNextInQueue() {
+    if (!listening || listenStopped) return;
+    if (listenIdx >= listenQueue.length) {
+      stopListening();
+      showToast("🎧 خلصنا الاستماع لكل الكلمات", "study");
+      return;
+    }
+    const w = listenQueue[listenIdx++];
+    const cards = [...grid.querySelectorAll(".card")];
+    const card = cards.find(c => c.querySelector(".english") && c.querySelector(".english").textContent === w.en);
+    grid.querySelectorAll(".card.speaking").forEach(c => c.classList.remove("speaking"));
+    if (card) {
+      card.classList.add("speaking");
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    if ("speechSynthesis" in window) {
+      const u = new SpeechSynthesisUtterance(w.en);
+      u.lang = "en-US";
+      if (selectedVoice) u.voice = selectedVoice;
+      u.rate = rate;
+      u.pitch = 1;
+      u.onend = () => setTimeout(playNextInQueue, 700);
+      u.onerror = () => setTimeout(playNextInQueue, 700);
+      speechSynthesis.speak(u);
+    } else {
+      setTimeout(playNextInQueue, 700);
+    }
+  }
+
+  listenBtn.addEventListener("click", () => {
+    if (listening) { stopListening(); return; }
+    startListening();
+  });
+
+  /* ========== 📊 إحصائياتي ========== */
+  const statsPanel = document.getElementById("statsPanel");
+  const statsGrid = document.getElementById("statsGrid");
+  const statsChart = document.getElementById("statsChart");
+
+  function todayKey(d) {
+    const x = d || new Date();
+    return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0");
+  }
+
+  function loadStats() {
+    try { return JSON.parse(localStorage.getItem("moraStats") || "{}"); }
+    catch (e) { return {}; }
+  }
+  function saveStats(s) {
+    try { localStorage.setItem("moraStats", JSON.stringify(s)); } catch (e) {}
+  }
+
+  function bumpToday() {
+    const s = loadStats();
+    const k = todayKey();
+    s[k] = (s[k] || 0) + 1;
+    saveStats(s);
+  }
+  function unbumpToday() {
+    const s = loadStats();
+    const k = todayKey();
+    if (s[k]) { s[k] = Math.max(0, s[k] - 1); saveStats(s); }
+  }
+
+  function computeStreak() {
+    const s = loadStats();
+    const d = new Date();
+    if (!s[todayKey(d)]) d.setDate(d.getDate() - 1);
+    let streak = 0;
+    while (s[todayKey(d)]) { streak++; d.setDate(d.getDate() - 1); }
+    return streak;
+  }
+
+  function weekTotal() {
+    const s = loadStats();
+    let sum = 0;
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      sum += s[todayKey(d)] || 0;
+    }
+    return sum;
+  }
+
+  function last7Days() {
+    const s = loadStats();
+    const arr = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      arr.push({ key: todayKey(d), n: s[todayKey(d)] || 0 });
+    }
+    return arr;
+  }
+
+  function renderStats() {
+    const s = loadStats();
+    const today = s[todayKey()] || 0;
+    const total = Object.values(s).reduce((a, b) => a + b, 0);
+    const week = weekTotal();
+    const streak = computeStreak();
+
+    statsGrid.innerHTML =
+      `<div class="stat-tile"><div class="st-num">${today}</div><div class="st-lbl">كلمة النهاردة</div></div>` +
+      `<div class="stat-tile"><div class="st-num">${week}</div><div class="st-lbl">آخر 7 أيام</div></div>` +
+      `<div class="stat-tile"><div class="st-num">${total}</div><div class="st-lbl">إجمالي الحفظ</div></div>` +
+      `<div class="stat-tile fire"><div class="st-num">${streak} 🔥</div><div class="st-lbl">أيام متتالية</div></div>`;
+
+    const days = last7Days();
+    const max = Math.max(1, ...days.map(d => d.n));
+    const dayNames = ["أحد", "إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"];
+    const todayK = todayKey();
+    let chart = `<div class="sc-title">آخر 7 أيام</div><div class="sc-bars">`;
+    days.forEach(d => {
+      chart +=
+        `<div class="sc-col">` +
+          `<div class="sc-bar${d.n === 0 ? " zero" : ""}${d.key === todayK ? " today" : ""}" style="height:${Math.round((d.n / max) * 100)}%"></div>` +
+          `<div class="sc-day">${dayNames[new Date(d.key).getDay()]}</div>` +
+        `</div>`;
+    });
+    chart += `</div>`;
+    statsChart.innerHTML = chart;
+  }
+
+  document.getElementById("statsBtn").addEventListener("click", () => {
+    renderStats();
+    statsPanel.hidden = false;
+  });
+  document.getElementById("statsClose").addEventListener("click", () => statsPanel.hidden = true);
+  statsPanel.addEventListener("click", e => {
+    if (e.target === statsPanel) statsPanel.hidden = true;
+  });
+
 
   spStartBtn.addEventListener("click", () => {
     sp.running = true;
