@@ -1,4 +1,4 @@
-const CACHE = "mora3-v2";
+const CACHE = "mora3-v3";
 const CORE = [
   "./",
   "./index.html",
@@ -24,16 +24,20 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
-  if (url.pathname.startsWith("/img/")) {
+
+  // الصفحة الرئيسية: الشبكة أولًا عشان أي تحديث يظهر فورًا
+  if (e.request.mode === "navigate") {
     e.respondWith(
-      caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+      fetch(e.request).then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy));
         return res;
-      }))
+      }).catch(() => caches.match(e.request))
     );
     return;
   }
+
+  // الصور والملفات: كاش أولًا
   e.respondWith(
     caches.match(e.request).then(hit =>
       hit || fetch(e.request).then(res => {
