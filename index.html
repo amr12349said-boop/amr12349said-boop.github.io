@@ -1446,6 +1446,110 @@
   .sc-day { font-size: .68rem; color: var(--muted); font-weight: 700; }
   .sc-empty { text-align: center; color: var(--muted); font-size: .85rem; padding: 16px 0; font-weight: 700; }
 
+  /* ---------- لوحة إدارة الكلمات ---------- */
+  .admin-msg { margin-top: 8px; min-height: 0; font-size: .85rem; font-weight: 700; }
+  .admin-msg.ok { color: #10b981; }
+  .admin-msg.err { color: #ef4444; }
+  .admin-form {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 18px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .admin-field-row { display: flex; gap: 10px; }
+  .admin-field { flex: 1; text-align: right; }
+  .admin-field.grow { flex: 2; }
+  .admin-field label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .admin-field input {
+    width: 100%;
+    padding: 10px 13px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: .95rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .admin-field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 15%, transparent);
+  }
+  .admin-btns { display: flex; gap: 8px; }
+  .admin-btns .sp-btn { padding: 11px 22px; font-size: .9rem; }
+  .admin-tools {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .admin-tools input {
+    flex: 1;
+    padding: 10px 13px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: .9rem;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .admin-tools input:focus { border-color: var(--primary); }
+  .admin-tools .sp-btn { padding: 10px 18px; font-size: .82rem; white-space: nowrap; }
+  .admin-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 46vh;
+    overflow-y: auto;
+  }
+  .admin-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 13px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    text-align: right;
+  }
+  .admin-item .ai-en { font-weight: 800; color: var(--ink); direction: ltr; }
+  .admin-item .ai-ar { font-size: .82rem; color: var(--muted); }
+  .admin-item .ai-sec {
+    font-size: .7rem;
+    font-weight: 800;
+    background: var(--soft);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+  .admin-item .ai-side { display: flex; align-items: center; gap: 6px; }
+  .admin-item .ai-btn {
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 7px 11px;
+    font-size: .78rem;
+    font-weight: 800;
+    transition: transform .15s;
+  }
+  .admin-item .ai-edit { background: var(--soft); color: var(--primary); }
+  .admin-item .ai-del { background: #fee2e2; color: #dc2626; }
+  .admin-item .ai-btn:hover { transform: scale(1.07); }
+  .admin-count { margin-top: 12px; text-align: center; font-size: .8rem; color: var(--muted); font-weight: 700; }
+
   /* ---------- تسجيل الدخول ---------- */
   .login-overlay {
     position: fixed;
@@ -1793,6 +1897,7 @@
   <button class="user-avatar" id="userAvatar" title="حسابك">👤</button>
   <div class="user-drop" id="userDrop" hidden>
     <span class="email" id="userLabel"></span>
+    <button id="adminBtn" hidden>⚙️ إدارة الكلمات</button>
     <button id="logoutBtn">تسجيل الخروج</button>
   </div>
 </div>
@@ -1956,6 +2061,48 @@
   </div>
 </div>
 
+<!-- ⚙️ إدارة الكلمات -->
+<div class="sp-panel" id="adminPanel" hidden>
+  <div class="sp-card">
+    <div class="sp-topbar">
+      <div class="sp-brand"><span class="sp-brand-ico">⚙️</span> إدارة الكلمات</div>
+      <button class="sp-close" id="adminClose" title="إغلاق">✕</button>
+    </div>
+    <p class="sp-note">لوحة تحكم الكلمات — التعديلات بتنحفظ في قاعدة البيانات وبتظهر لكل المستخدمين فورًا.</p>
+    <div class="admin-msg" id="adminMsg"></div>
+    <div class="admin-form" id="adminForm">
+      <div class="admin-field-row">
+        <div class="admin-field">
+          <label for="adSec">الحصة</label>
+          <input type="number" id="adSec" min="1" max="10" value="1" />
+        </div>
+        <div class="admin-field grow">
+          <label for="adEn">الكلمة (إنجليزي)</label>
+          <input type="text" id="adEn" dir="ltr" placeholder="example" />
+        </div>
+      </div>
+      <div class="admin-field">
+        <label for="adAr">المعنى (عربي)</label>
+        <input type="text" id="adAr" placeholder="المعنى" />
+      </div>
+      <div class="admin-field">
+        <label for="adPr">النطق</label>
+        <input type="text" id="adPr" dir="rtl" placeholder="إزّاي تُنطق" />
+      </div>
+      <div class="admin-btns">
+        <button class="sp-btn" id="adAddBtn">➕ إضافة الكلمة</button>
+        <button class="sp-btn ghost" id="adCancelBtn" hidden>إلغاء التعديل</button>
+      </div>
+    </div>
+    <div class="admin-tools">
+      <input type="text" id="adminSearch" placeholder="ابحث في الكلمات..." />
+      <button class="sp-btn ghost" id="adminSeedBtn">📥 تحميل الكلمات الافتراضية</button>
+    </div>
+    <div class="admin-list" id="adminList"></div>
+    <div class="admin-count" id="adminCount"></div>
+  </div>
+</div>
+
 <main class="grid" id="grid"></main>
 
 <!-- ⬇️ مكان الإعلان تحت الكلمات (إعلان تلقائي من AdSense) -->
@@ -2046,7 +2193,7 @@
 </div>
 
 <script>
-  const words = [
+  let words = [
     { sec: 1, en: "man", ar: "إنسان", pr: "مَان" },
     { sec: 1, en: "people, human beings", ar: "الناس ، البشر", pr: "بِيبِل" },
     { sec: 1, en: "the world", ar: "العالم", pr: "ذَ وَورلد" },
@@ -2128,6 +2275,7 @@
     { sec: 2, en: "step", ar: "خطوة", pr: "سْتَب" },
     { sec: 2, en: "press", ar: "صحافة", pr: "بْرَس" }
   ];
+  const defaultWords = words.slice();
 
   const grid = document.getElementById("grid");
   const searchInput = document.getElementById("search");
@@ -3306,6 +3454,8 @@
         userBar.hidden = false;
         userLabel.textContent = "وضع المطور 👨‍💻";
         userAvatar.textContent = "م";
+        document.getElementById("adminBtn").hidden = false;
+        await loadWordsFromDb();
         render(words);
         updateProgress();
         filterCards();
@@ -3412,7 +3562,172 @@
       localStorage.removeItem("moraDev");
       auth.signOut();
     });
+
+    /* ========== ⚙️ قاعدة بيانات الكلمات ولوحة الإدارة ========== */
+    const adminBtn = document.getElementById("adminBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminMsg = document.getElementById("adminMsg");
+    const adminSearch = document.getElementById("adminSearch");
+    const adminList = document.getElementById("adminList");
+    const adminCount = document.getElementById("adminCount");
+    const adSec = document.getElementById("adSec");
+    const adEn = document.getElementById("adEn");
+    const adAr = document.getElementById("adAr");
+    const adPr = document.getElementById("adPr");
+    const adAddBtn = document.getElementById("adAddBtn");
+    const adCancelBtn = document.getElementById("adCancelBtn");
+
+    let editingWord = null;
+
+    function adminSay(text, ok) {
+      adminMsg.textContent = text;
+      adminMsg.className = "admin-msg " + (ok ? "ok" : "err");
+    }
+
+    async function loadWordsFromDb() {
+      if (!db) return;
+      try {
+        const doc = await db.collection("words").doc("main").get();
+        if (doc.exists && Array.isArray(doc.data().list) && doc.data().list.length > 0) {
+          words = doc.data().list;
+          buildSectionBtns();
+          render(words);
+          updateProgress();
+          filterCards();
+        }
+      } catch (e) {
+        console.log("words load fail", e);
+      }
+    }
+
+    async function saveWordsToDb() {
+      if (!db) return false;
+      try {
+        await db.collection("words").doc("main").set({
+          list: words,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return true;
+      } catch (e) {
+        console.log("words save fail", e);
+        adminSay("مشكلة في الحفظ: " + e.message, false);
+        return false;
+      }
+    }
+
+    function renderAdminList() {
+      const q = adminSearch.value.trim().toLowerCase();
+      const filtered = q
+        ? words.filter(w =>
+            w.en.toLowerCase().includes(q) || w.ar.includes(q) || w.pr.includes(q))
+        : words;
+      adminList.innerHTML = "";
+      filtered.forEach((w, i) => {
+        const item = document.createElement("div");
+        item.className = "admin-item";
+        item.innerHTML =
+          `<div>` +
+            `<span class="ai-sec">حصة ${w.sec}</span>` +
+            `<div class="ai-en">${w.en}</div>` +
+            `<div class="ai-ar">${w.ar}</div>` +
+          `</div>` +
+          `<div class="ai-side">` +
+            `<button class="ai-btn ai-edit" title="تعديل">✏️</button>` +
+            `<button class="ai-btn ai-del" title="حذف">🗑</button>` +
+          `</div>`;
+        item.querySelector(".ai-edit").addEventListener("click", () => {
+          editingWord = w;
+          adSec.value = w.sec;
+          adEn.value = w.en;
+          adAr.value = w.ar;
+          adPr.value = w.pr;
+          adAddBtn.textContent = "💾 حفظ التعديل";
+          adCancelBtn.hidden = false;
+          adminMsg.textContent = "";
+          adminMsg.className = "admin-msg";
+        });
+        item.querySelector(".ai-del").addEventListener("click", async () => {
+          if (!confirm("تحذف «" + w.en + "» نهائيًا؟")) return;
+          words = words.filter(x => x !== w);
+          await saveWordsToDb();
+          render(words);
+          updateProgress();
+          filterCards();
+          renderAdminList();
+          adminSay("🗑 اتحذفت الكلمة وحفظنا التغيير", true);
+        });
+        adminList.appendChild(item);
+      });
+      adminCount.textContent = `${filtered.length} / ${words.length} كلمة`;
+    }
+
+    adAddBtn.addEventListener("click", async () => {
+      const sec = parseInt(adSec.value, 10) || 1;
+      const en = adEn.value.trim();
+      const ar = adAr.value.trim();
+      const pr = adPr.value.trim();
+      if (!en || !ar || !pr) {
+        adminSay("اكتب الكلمة والمعنى والنطق كلهم", false);
+        return;
+      }
+      if (editingWord) {
+        editingWord.sec = sec;
+        editingWord.en = en;
+        editingWord.ar = ar;
+        editingWord.pr = pr;
+        editingWord = null;
+        adminSay("💾 اتعدّلت الكلمة وحفظناها", true);
+      } else {
+        words.push({ sec, en, ar, pr });
+        adminSay("➕ اتضافت الكلمة وحفظناها", true);
+      }
+      const ok = await saveWordsToDb();
+      if (ok) {
+        adEn.value = ""; adAr.value = ""; adPr.value = ""; adSec.value = "1";
+        adAddBtn.textContent = "➕ إضافة الكلمة";
+        adCancelBtn.hidden = true;
+        render(words);
+        updateProgress();
+        filterCards();
+        renderAdminList();
+      }
+    });
+
+    adCancelBtn.addEventListener("click", () => {
+      editingWord = null;
+      adEn.value = ""; adAr.value = ""; adPr.value = ""; adSec.value = "1";
+      adAddBtn.textContent = "➕ إضافة الكلمة";
+      adCancelBtn.hidden = true;
+      adminMsg.textContent = "";
+      adminMsg.className = "admin-msg";
+    });
+
+    adminSearch.addEventListener("input", renderAdminList);
+
+    document.getElementById("adminSeedBtn").addEventListener("click", async () => {
+      if (!confirm("ترجع كل الكلمات للنسخة الافتراضية الأصلية؟ هيحذف أي كلمة ضفتها.")) return;
+      words = defaultWords.slice();
+      const ok = await saveWordsToDb();
+      if (ok) {
+        buildSectionBtns();
+        render(words);
+        updateProgress();
+        filterCards();
+        renderAdminList();
+        adminSay("📥 رجعنا الكلمات الافتراضية", true);
+      }
+    });
+
+    adminBtn.addEventListener("click", () => {
+      renderAdminList();
+      adminPanel.hidden = false;
+    });
+    document.getElementById("adminClose").addEventListener("click", () => adminPanel.hidden = true);
+    adminPanel.addEventListener("click", e => {
+      if (e.target === adminPanel) adminPanel.hidden = true;
+    });
   }
+
 </script>
 
 <script>
