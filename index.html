@@ -2802,6 +2802,10 @@
     auth = firebase.auth();
     db = firebase.firestore();
 
+    try {
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch (e) { console.log("persist", e); }
+
     function pushLearned() {
       if (!uid) return;
       clearTimeout(learnedTimer);
@@ -2838,11 +2842,21 @@
     auth.onAuthStateChanged(async user => {
       if (user) {
         uid = user.uid;
+        localStorage.removeItem("moraDev");
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = user.email || "";
         userAvatar.textContent = ((user.email || user.displayName || "؟").trim()[0] || "؟").toUpperCase();
         await loadFromServer();
+      } else if (localStorage.getItem("moraDev") === "1") {
+        uid = null;
+        loginOverlay.classList.add("hide");
+        userBar.hidden = false;
+        userLabel.textContent = "وضع المطور 👨‍💻";
+        userAvatar.textContent = "م";
+        render(words);
+        updateProgress();
+        filterCards();
       } else {
         uid = null;
         userBar.hidden = true;
@@ -2858,6 +2872,7 @@
       const pass = authPass.value;
       if (email === "mora" && pass === "01282810582") {
         uid = null;
+        localStorage.setItem("moraDev", "1");
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = "وضع المطور 👨‍💻";
@@ -2940,7 +2955,10 @@
       if (!e.target.closest(".user-menu")) userDrop.hidden = true;
     });
 
-    logoutBtn.addEventListener("click", () => auth.signOut());
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("moraDev");
+      auth.signOut();
+    });
   }
 </script>
 
