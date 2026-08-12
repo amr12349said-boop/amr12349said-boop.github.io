@@ -1,9 +1,11 @@
-const CACHE = "mora3-v1";
+const CACHE = "mora3-v2";
 const CORE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./photo.jpg"
+  "./photo.jpg",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", e => {
