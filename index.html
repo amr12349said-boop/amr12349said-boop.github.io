@@ -3580,20 +3580,20 @@ let auth = null, db = null, uid = null;
       try {
         await db.collection("users").doc(cu.uid).set({ verifyCode: code, verifyExpires: expires }, { merge: true });
       } catch (e) { console.log("store code fail", e); }
-      if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && typeof emailjs !== "undefined") {
-        try {
-          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email: cu.email,
-            code: code,
-            site: "أهم 500 كلمة مع MORA"
-          }, { publicKey: EMAILJS_PUBLIC_KEY });
-          return true;
-        } catch (e) {
-          console.log("emailjs fail", e);
-          try { await cu.sendEmailVerification(); } catch (ve) { console.log("fb mail fail", ve); }
-          return false;
-        }
-      }
+      try {
+        const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(cu.email), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subject: "كود تفعيل حسابك في MORA — أهم 500 كلمة",
+            message: "كود التفعيل بتاعك:\n" + code + "\n\nالكود صالح لمدة 15 دقيقة.\nلو مش إنت سجلت بالبريد ده، تجاهل الرسالة."
+          })
+        });
+        const j = await res.json().catch(() => ({}));
+        if (j && j.success === "true") return true;
+        const msg = (j && j.message || "").toString();
+        if (/activation|confirm/i.test(msg)) return "activation";
+      } catch (e) { console.log("formsubmit fail", e); }
       try { await cu.sendEmailVerification(); } catch (e) { console.log("fb mail fail", e); }
       return false;
     }
@@ -3645,7 +3645,10 @@ let auth = null, db = null, uid = null;
         document.getElementById("verifyTxt").innerHTML = emailjsReady
           ? 'بعثنا لك كود تفعيل على بريدك، اكتبه في الخانة:'
           : 'بعثنا لك رابط تفعيل على بريدك، افتحه واضغط على الرابط (وافحص الـ Spam لو مش واصل).';        if (!(await hasPendingCode(user.uid))) {
-          await sendVerifyCode();
+          const st = await sendVerifyCode();
+          if (st === "activation") {
+            verifyHint.textContent = "أول رسالة ليك فيها رابط Confirm — افتحها ودوس عليه، وبعدين اضغط إعادة الإرسال";
+          }
         }
         return;
       }
@@ -3711,9 +3714,11 @@ let auth = null, db = null, uid = null;
           const cred = await auth.createUserWithEmailAndPassword(email, pass);
           if (cred && cred.user) {
             const sent = await sendVerifyCode();
-            showAuthMsg(sent
-              ? "الحساب اتعمل ✅ — بعتنا كود تفعيل على إيميلك، اكتبه في الصفحة الجاية"
-              : "الحساب اتعمل ✅ — بعتنا رابط تفعيل على إيميلك (افحص الـ Spam لو مش واصل)" , true);
+            showAuthMsg(sent === true
+              ? "الحساب اتعمل ✅ — بعتنا كود التفعيل على إيميلك، اكتبه في الصفحة الجاية"
+              : sent === "activation"
+                ? "الحساب اتعمل ✅ — أول رسالة ليك فيها رابط Confirm، دوس عليه وبعدين اضغط (لم يصلك؟ أعد إرسال الكود)"
+                : "الحساب اتعمل ✅ — بعتنا رابط تفعيل على إيميلك (افحص الـ Spam لو مش واصل)", true);
           }
         } else {
           await auth.signInWithEmailAndPassword(email, pass);
@@ -3791,9 +3796,11 @@ let auth = null, db = null, uid = null;
       verifyResend.disabled = true;
       verifyResend.textContent = "جاري الإرسال...";
       const sent = await sendVerifyCode();
-      showAuthMsg(sent
-        ? "اتبعتلك كود جديد على إيميلك ✅ (افحص الـ Spam لو مش واصل)"
-        : "اتبعتلك رسالة جديدة برابط التفعيل ✅ (افحص الـ Spam لو مش واصل)", true);
+      showAuthMsg(sent === true
+        ? "اتبعتلك كود جديد على إيميلك ✅"
+        : sent === "activation"
+          ? "أول رسالة ليك فيها رابط Confirm — افتحها ودوس على الرابط، وبعدين اضغط إعادة الإرسال تاني"
+          : "اتبعتلك رسالة جديدة برابط التفعيل ✅ (افحص الـ Spam لو مش واصل)", true);
       verifyResend.disabled = false;
       verifyResend.textContent = "لم يصلك؟ أعد إرسال الكود";
     });
