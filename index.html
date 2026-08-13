@@ -1902,6 +1902,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- ⬇️ الإعلانات (Google AdSense) — مفعّل -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7579059925806406" crossorigin="anonymous"></script>
 </head>
@@ -1959,8 +1960,13 @@
     <div class="verify-wrap" id="verifyWrap" hidden>
       <div class="verify-ico">✉️</div>
       <h3>فعّل حسابك</h3>
-      <p class="verify-txt">بعثنا رابط تفعيل على بريدك<br><b id="verifyEmail"></b><br>افتح الإيميل واضغط على الرابط عشان تقدر تستخدم الموقع.</p>
-      <button class="login-submit" id="verifyResend">إعادة إرسال الرابط</button>
+      <p class="verify-txt" id="verifyTxt">بعثنا لك كود تفعيل على بريدك<br><b id="verifyEmail"></b><br>اكتب الكود من 6 أرقام اللي وصلك:</p>
+      <div class="code-row" id="verifyCodeRow" hidden>
+        <input type="text" id="verifyCode" dir="ltr" maxlength="6" inputmode="numeric" placeholder="••••••" autocomplete="one-time-code" />
+        <button class="login-submit code-btn" id="verifySubmit">تفعيل ✔</button>
+      </div>
+      <p class="verify-hint" id="verifyHint"></p>
+      <button class="login-forgot" id="verifyResend">لم يصلك؟ أعد إرسال الكود</button>
       <button class="login-forgot" id="verifyLogout">تسجيل الخروج</button>
     </div>
   </div>
@@ -3433,13 +3439,18 @@
 
   render(words);
 
-  // ===== تسجيل الدخول والمزامنة (Firebase) =====
+// ===== تسجيل الدخول والمزامنة (Firebase) =====
   const FIREBASE_CONFIG = {
     apiKey: "AIzaSyBRnRQQ9uPz1_UaZYOfpnJ7LW_KZAHMs_A",
     authDomain: "mora3-ab167.firebaseapp.com",
     projectId: "mora3-ab167",
     appId: "1:585120906730:web:83b0534766aebf04504693"
   };
+
+  // ===== إرسال كود التفعيل عبر EmailJS =====
+  const EMAILJS_PUBLIC_KEY = "";   // Public Key من حساب EmailJS
+  const EMAILJS_SERVICE_ID = "";   // Service ID من EmailJS
+  const EMAILJS_TEMPLATE_ID = "";  // Template ID من EmailJS
 
   const loginOverlay = document.getElementById("loginOverlay");
   const authMsg = document.getElementById("authMsg");
@@ -3458,10 +3469,14 @@
   const verifyEmail = document.getElementById("verifyEmail");
   const verifyResend = document.getElementById("verifyResend");
   const verifyLogout = document.getElementById("verifyLogout");
+  const verifyCode = document.getElementById("verifyCode");
+  const verifySubmit = document.getElementById("verifySubmit");
+  const verifyHint = document.getElementById("verifyHint");
 
-  let auth = null, db = null, uid = null;
+let auth = null, db = null, uid = null;
   let isRegister = false;
   let learnedTimer = null;
+  let codeVerified = false;
   const fbReady = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && typeof firebase !== "undefined" && firebase.apps);
 
   function showAuthMsg(text, ok) {
@@ -3530,6 +3545,7 @@
       db.collection("presence").doc(uid).set({
         email: userLabel.textContent || "مستخدم",
         online: !!online,
+        verified: codeVerified || (auth.currentUser && auth.currentUser.emailVerified) === true,
         lastSeen: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true }).catch(() => {});
     }
@@ -3551,22 +3567,91 @@
       if (uid) setPresence(!document.hidden);
     });
 
+    // ===== 🔑 التفعيل بكود من 6 أرقام (EmailJS) =====
+    function genVerifyCode() {
+      return String(Math.floor(100000 + Math.random() * 900000));
+    }
+
+    async function sendVerifyCode() {
+      const cu = auth.currentUser;
+      if (!cu || !cu.email) return false;
+      const code = genVerifyCode();
+      const expires = Date.now() + 15 * 60 * 1000;
+      try {
+        await db.collection("users").doc(cu.uid).set({ verifyCode: code, verifyExpires: expires }, { merge: true });
+      } catch (e) { console.log("store code fail", e); }
+      if (EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && typeof emailjs !== "undefined") {
+        try {
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: cu.email,
+            code: code,
+            site: "أهم 500 كلمة مع MORA"
+          }, { publicKey: EMAILJS_PUBLIC_KEY });
+          return true;
+        } catch (e) {
+          console.log("emailjs fail", e);
+          try { await cu.sendEmailVerification(); } catch (ve) { console.log("fb mail fail", ve); }
+          return false;
+        }
+      }
+      try { await cu.sendEmailVerification(); } catch (e) { console.log("fb mail fail", e); }
+      return false;
+    }
+
+    async function hasPendingCode(uid) {
+      try {
+        const doc = await db.collection("users").doc(uid).get();
+        const d = doc.exists ? doc.data() : {};
+        return !!(d.verifyCode && d.verifyExpires && d.verifyExpires > Date.now());
+      } catch (e) { return false; }
+    }
+
+    async function isFirestoreVerified(uid) {
+      try {
+        const doc = await db.collection("users").doc(uid).get();
+        return doc.exists && doc.data().verified === true;
+      } catch (e) { return false; }
+    }
+
 
     auth.onAuthStateChanged(async user => {
       if (user && !user.emailVerified) {
         uid = user.uid;
+        const fv = await isFirestoreVerified(user.uid);
+        if (fv) {
+          codeVerified = true;
+          localStorage.removeItem("moraDev");
+          hideBoot();
+          loginOverlay.classList.add("hide");
+          verifyWrap.hidden = true;
+          userBar.hidden = false;
+          userLabel.textContent = user.email || "";
+          userAvatar.textContent = ((user.email || user.displayName || "؟").trim()[0] || "؟").toUpperCase();
+          await loadFromServer();
+          startPresence();
+          return;
+        }
         localStorage.removeItem("moraDev");
         hideBoot();
         loginOverlay.classList.remove("hide");
         userBar.hidden = true;
         verifyEmail.textContent = user.email || "";
+        verifyHint.textContent = "";
+        verifyCode.value = "";
         verifyWrap.hidden = false;
         authMsg.className = "auth-msg";
-        user.sendEmailVerification().catch(() => {});
+        const emailjsReady = EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID;
+        document.getElementById("verifyCodeRow").hidden = !emailjsReady;
+        document.getElementById("verifyTxt").innerHTML = emailjsReady
+          ? 'بعثنا لك كود تفعيل على بريدك، اكتبه في الخانة:'
+          : 'بعثنا لك رابط تفعيل على بريدك، افتحه واضغط على الرابط (وافحص الـ Spam لو مش واصل).';        if (!(await hasPendingCode(user.uid))) {
+          await sendVerifyCode();
+        }
         return;
       }
       if (user) {
         uid = user.uid;
+        codeVerified = user.emailVerified === true;
         localStorage.removeItem("moraDev");
         hideBoot();
         loginOverlay.classList.add("hide");
@@ -3625,13 +3710,11 @@
         if (isRegister) {
           const cred = await auth.createUserWithEmailAndPassword(email, pass);
           if (cred && cred.user) {
-            try {
-              await cred.user.sendEmailVerification();
-            } catch (ve) {
-              console.log("verify mail fail", ve);
-            }
+            const sent = await sendVerifyCode();
+            showAuthMsg(sent
+              ? "الحساب اتعمل ✅ — بعتنا كود تفعيل على إيميلك، اكتبه في الصفحة الجاية"
+              : "الحساب اتعمل ✅ — بعتنا رابط تفعيل على إيميلك (افحص الـ Spam لو مش واصل)" , true);
           }
-          showAuthMsg("الحساب اتعمل ✅ — بعتنا رابط تفعيل على إيميلك، افتحه قبل ما تبدأ", true);
         } else {
           await auth.signInWithEmailAndPassword(email, pass);
           showAuthMsg("تم تسجيل الدخول بنجاح ✅", true);
@@ -3707,15 +3790,51 @@
     verifyResend.addEventListener("click", async () => {
       verifyResend.disabled = true;
       verifyResend.textContent = "جاري الإرسال...";
+      const sent = await sendVerifyCode();
+      showAuthMsg(sent
+        ? "اتبعتلك كود جديد على إيميلك ✅ (افحص الـ Spam لو مش واصل)"
+        : "اتبعتلك رسالة جديدة برابط التفعيل ✅ (افحص الـ Spam لو مش واصل)", true);
+      verifyResend.disabled = false;
+      verifyResend.textContent = "لم يصلك؟ أعد إرسال الكود";
+    });
+
+    verifySubmit.addEventListener("click", async () => {
+      const cu = auth.currentUser;
+      const entered = verifyCode.value.trim();
+      if (!cu || !entered) { verifyHint.textContent = "اكتب الكود الأول"; return; }
+      verifySubmit.disabled = true;
       try {
-        await auth.currentUser.sendEmailVerification();
-        showAuthMsg("اتبعتلك رسالة جديدة برابط التفعيل ✅", true);
+        const doc = await db.collection("users").doc(cu.uid).get();
+        const d = doc.exists ? doc.data() : {};
+        if (d.verifyCode && d.verifyCode === entered && d.verifyExpires && d.verifyExpires > Date.now()) {
+          await db.collection("users").doc(cu.uid).set({
+            verified: true,
+            verifyCode: "",
+            verifyExpires: 0
+          }, { merge: true });
+          verifyHint.textContent = "تم التفعيل ✅";
+          codeVerified = true;
+          verifyWrap.hidden = true;
+          loginOverlay.classList.add("hide");
+          userBar.hidden = false;
+          userLabel.textContent = cu.email || "";
+          userAvatar.textContent = ((cu.email || "؟").trim()[0] || "؟").toUpperCase();
+          await loadFromServer();
+          startPresence();
+        } else if (d.verifyExpires && d.verifyExpires <= Date.now()) {
+          verifyHint.textContent = "الكود انتهت صلاحيته — اضغط إعادة إرسال";
+        } else {
+          verifyHint.textContent = "الكود غلط — جرّب تاني";
+        }
       } catch (e) {
-        showAuthMsg("مشكلة في الإرسال: " + e.message, false);
+        verifyHint.textContent = "مشكلة في التحقق: " + e.message;
       } finally {
-        verifyResend.disabled = false;
-        verifyResend.textContent = "إعادة إرسال الرابط";
+        verifySubmit.disabled = false;
       }
+    });
+
+    verifyCode.addEventListener("keydown", e => {
+      if (e.key === "Enter") verifySubmit.click();
     });
 
     verifyLogout.addEventListener("click", () => {
@@ -3728,7 +3847,7 @@
       if (cu && !cu.emailVerified) {
         try {
           await cu.reload();
-          if (cu.emailVerified) {
+          if (cu.emailVerified || (await isFirestoreVerified(cu.uid))) {
             loginOverlay.classList.add("hide");
             verifyWrap.hidden = true;
             location.reload();
@@ -3807,7 +3926,7 @@
           item.className = "au-item";
           item.innerHTML =
             `<span class="au-dot ${u.online === true ? "on" : ""}"></span>` +
-            `<span class="au-mail">${u.email || u.id}</span>` +
+            `<span class="au-mail">${u.email || u.id}${u.verified ? ' <span class="au-badge">✅</span>' : ""}</span>` +
             `<span class="au-last">${u.online === true ? "🟢 نشط الآن" : "آخر نشاط: " + fmtLastSeen(u.lastSeen)}</span>`;
           adminUsersList.appendChild(item);
         });
