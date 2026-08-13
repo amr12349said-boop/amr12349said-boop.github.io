@@ -1,4 +1,4 @@
-const CACHE = "mora3-v3";
+const CACHE = "mora3-v4";
 const CORE = [
   "./",
   "./index.html",
