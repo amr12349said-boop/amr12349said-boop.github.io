@@ -3609,6 +3609,16 @@ let auth = null, db = null, uid = null;
       } catch (e) { return false; }
     }
 
+    function resetUserCache(uid) {
+      ["learnedWords", "spStudyMin", "spBreakMin", "spSmartBreak", "spBell", "studyPlanner", "reviewTimes", "moraStats"].forEach(k => localStorage.removeItem(k));
+      try { localStorage.setItem("moraUser", uid); } catch (e) {}
+      learned = new Set();
+      studyMin = 25; breakMin = 5; smartBreak = true; bellOn = true;
+      render(words);
+      updateProgress();
+      filterCards();
+    }
+
 
     auth.onAuthStateChanged(async user => {
       if (user && !user.emailVerified) {
@@ -3616,6 +3626,7 @@ let auth = null, db = null, uid = null;
         const fv = await isFirestoreVerified(user.uid);
         if (fv) {
           codeVerified = true;
+          if (localStorage.getItem("moraUser") !== user.uid) resetUserCache(user.uid);
           localStorage.removeItem("moraDev");
           hideBoot();
           loginOverlay.classList.add("hide");
@@ -3649,6 +3660,7 @@ localStorage.removeItem("moraDev");
       if (user) {
         uid = user.uid;
         codeVerified = user.emailVerified === true;
+        if (localStorage.getItem("moraUser") !== user.uid) resetUserCache(user.uid);
         localStorage.removeItem("moraDev");
         hideBoot();
         loginOverlay.classList.add("hide");
@@ -3660,6 +3672,7 @@ localStorage.removeItem("moraDev");
         startPresence();
       } else if (localStorage.getItem("moraDev") === "1") {
         uid = null;
+        try { localStorage.setItem("moraUser", "dev"); } catch (e) {}
         hideBoot();
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
@@ -3687,6 +3700,7 @@ localStorage.removeItem("moraDev");
       if (email === "mora" && pass === "01282810582") {
         uid = null;
         localStorage.setItem("moraDev", "1");
+        try { localStorage.setItem("moraUser", "dev"); } catch (e) {}
         loginOverlay.classList.add("hide");
         userBar.hidden = false;
         userLabel.textContent = "وضع المطور 👨‍💻";
@@ -3815,6 +3829,7 @@ localStorage.removeItem("moraDev");
           }, { merge: true });
           verifyHint.textContent = "تم التفعيل ✅";
           codeVerified = true;
+          if (localStorage.getItem("moraUser") !== cu.uid) resetUserCache(cu.uid);
           verifyWrap.hidden = true;
           loginOverlay.classList.add("hide");
           userBar.hidden = false;
