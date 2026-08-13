@@ -1902,7 +1902,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <!-- ⬇️ الإعلانات (Google AdSense) — مفعّل -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7579059925806406" crossorigin="anonymous"></script>
 </head>
@@ -3447,10 +3446,7 @@
     appId: "1:585120906730:web:83b0534766aebf04504693"
   };
 
-  // ===== إرسال كود التفعيل عبر EmailJS =====
-  const EMAILJS_PUBLIC_KEY = "";   // Public Key من حساب EmailJS
-  const EMAILJS_SERVICE_ID = "";   // Service ID من EmailJS
-  const EMAILJS_TEMPLATE_ID = "";  // Template ID من EmailJS
+  // ===== إرسال كود التفعيل عبر FormSubmit (من غير تسجيل) =====
 
   const loginOverlay = document.getElementById("loginOverlay");
   const authMsg = document.getElementById("authMsg");
@@ -3631,7 +3627,7 @@ let auth = null, db = null, uid = null;
           startPresence();
           return;
         }
-        localStorage.removeItem("moraDev");
+localStorage.removeItem("moraDev");
         hideBoot();
         loginOverlay.classList.remove("hide");
         userBar.hidden = true;
@@ -3640,11 +3636,9 @@ let auth = null, db = null, uid = null;
         verifyCode.value = "";
         verifyWrap.hidden = false;
         authMsg.className = "auth-msg";
-        const emailjsReady = EMAILJS_PUBLIC_KEY && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID;
-        document.getElementById("verifyCodeRow").hidden = !emailjsReady;
-        document.getElementById("verifyTxt").innerHTML = emailjsReady
-          ? 'بعثنا لك كود تفعيل على بريدك، اكتبه في الخانة:'
-          : 'بعثنا لك رابط تفعيل على بريدك، افتحه واضغط على الرابط (وافحص الـ Spam لو مش واصل).';        if (!(await hasPendingCode(user.uid))) {
+        document.getElementById("verifyCodeRow").hidden = false;
+        document.getElementById("verifyTxt").innerHTML = 'بعثنا لك كود تفعيل على بريدك، اكتبه في الخانة:';
+        if (!(await hasPendingCode(user.uid))) {
           const st = await sendVerifyCode();
           if (st === "activation") {
             verifyHint.textContent = "أول رسالة ليك فيها رابط Confirm — افتحها ودوس عليه، وبعدين اضغط إعادة الإرسال";
