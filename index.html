@@ -1754,7 +1754,7 @@
     height: 1px;
     background: var(--line);
   }
-  .google-btn {
+.google-btn {
     width: 100%;
     display: flex;
     align-items: center;
@@ -1768,9 +1768,23 @@
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
+    transition: background .2s, transform .15s;
   }
   .google-btn:hover { background: var(--soft); }
   .google-btn:disabled { opacity: .6; cursor: wait; }
+  .verify-wrap {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--soft);
+    border: 1px solid var(--line);
+    text-align: center;
+  }
+  .verify-ico { font-size: 1.6rem; margin-bottom: 6px; }
+  .verify-wrap h3 { font-size: 1rem; margin-bottom: 6px; }
+  .verify-txt { font-size: .82rem; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+  .verify-txt b { color: var(--primary); direction: ltr; display: inline-block; word-break: break-all; }
+  .verify-wrap .login-submit { margin-top: 4px; }
 
   /* ---------- سياسة الخصوصية ---------- */
   .privacy-overlay {
@@ -1939,9 +1953,16 @@
     <button class="login-submit" id="authSubmit">تسجيل الدخول</button>
     <button class="login-forgot" id="authForgot">نسيت كلمة المرور؟</button>
     <button class="login-toggle" id="authToggle">مفيش حساب؟ اعمل واحد جديد</button>
-    <div class="login-divider"><span>أو</span></div>
+<div class="login-divider"><span>أو</span></div>
     <button class="google-btn" id="googleBtn">سجّل الدخول بحساب Google</button>
     <p class="login-note">🔒 مجاني 100% — كلماتك المحفوظة بتتزامن على حسابتك من أي جهاز</p>
+    <div class="verify-wrap" id="verifyWrap" hidden>
+      <div class="verify-ico">✉️</div>
+      <h3>فعّل حسابك</h3>
+      <p class="verify-txt">بعثنا رابط تفعيل على بريدك<br><b id="verifyEmail"></b><br>افتح الإيميل واضغط على الرابط عشان تقدر تستخدم الموقع.</p>
+      <button class="login-submit" id="verifyResend">إعادة إرسال الرابط</button>
+      <button class="login-forgot" id="verifyLogout">تسجيل الخروج</button>
+    </div>
   </div>
 </div>
 
@@ -3433,6 +3454,10 @@
   const userDrop = document.getElementById("userDrop");
   const logoutBtn = document.getElementById("logoutBtn");
   const googleBtn = document.getElementById("googleBtn");
+  const verifyWrap = document.getElementById("verifyWrap");
+  const verifyEmail = document.getElementById("verifyEmail");
+  const verifyResend = document.getElementById("verifyResend");
+  const verifyLogout = document.getElementById("verifyLogout");
 
   let auth = null, db = null, uid = null;
   let isRegister = false;
@@ -3528,11 +3553,24 @@
 
 
     auth.onAuthStateChanged(async user => {
+      if (user && !user.emailVerified) {
+        uid = user.uid;
+        localStorage.removeItem("moraDev");
+        hideBoot();
+        loginOverlay.classList.remove("hide");
+        userBar.hidden = true;
+        verifyEmail.textContent = user.email || "";
+        verifyWrap.hidden = false;
+        authMsg.className = "auth-msg";
+        user.sendEmailVerification().catch(() => {});
+        return;
+      }
       if (user) {
         uid = user.uid;
         localStorage.removeItem("moraDev");
         hideBoot();
         loginOverlay.classList.add("hide");
+        verifyWrap.hidden = true;
         userBar.hidden = false;
         userLabel.textContent = user.email || "";
         userAvatar.textContent = ((user.email || user.displayName || "؟").trim()[0] || "؟").toUpperCase();
@@ -3584,9 +3622,20 @@
       authSubmit.disabled = true;
       authSubmit.textContent = "...";
       try {
-        if (isRegister) await auth.createUserWithEmailAndPassword(email, pass);
-        else await auth.signInWithEmailAndPassword(email, pass);
-        showAuthMsg("تم تسجيل الدخول بنجاح ✅", true);
+        if (isRegister) {
+          const cred = await auth.createUserWithEmailAndPassword(email, pass);
+          if (cred && cred.user) {
+            try {
+              await cred.user.sendEmailVerification();
+            } catch (ve) {
+              console.log("verify mail fail", ve);
+            }
+          }
+          showAuthMsg("الحساب اتعمل ✅ — بعتنا رابط تفعيل على إيميلك، افتحه قبل ما تبدأ", true);
+        } else {
+          await auth.signInWithEmailAndPassword(email, pass);
+          showAuthMsg("تم تسجيل الدخول بنجاح ✅", true);
+        }
       } catch (e) {
         const map = {
           "invalid-email": "البريد الإلكتروني مش مكتوب صح",
@@ -3653,6 +3702,39 @@
       stopPresence();
       localStorage.removeItem("moraDev");
       auth.signOut();
+    });
+
+    verifyResend.addEventListener("click", async () => {
+      verifyResend.disabled = true;
+      verifyResend.textContent = "جاري الإرسال...";
+      try {
+        await auth.currentUser.sendEmailVerification();
+        showAuthMsg("اتبعتلك رسالة جديدة برابط التفعيل ✅", true);
+      } catch (e) {
+        showAuthMsg("مشكلة في الإرسال: " + e.message, false);
+      } finally {
+        verifyResend.disabled = false;
+        verifyResend.textContent = "إعادة إرسال الرابط";
+      }
+    });
+
+    verifyLogout.addEventListener("click", () => {
+      localStorage.removeItem("moraDev");
+      auth.signOut();
+    });
+
+    window.addEventListener("focus", async () => {
+      const cu = auth.currentUser;
+      if (cu && !cu.emailVerified) {
+        try {
+          await cu.reload();
+          if (cu.emailVerified) {
+            loginOverlay.classList.add("hide");
+            verifyWrap.hidden = true;
+            location.reload();
+          }
+        } catch (e) { console.log("reload fail", e); }
+      }
     });
 
     /* ========== ⚙️ قاعدة بيانات الكلمات ولوحة الإدارة ========== */
