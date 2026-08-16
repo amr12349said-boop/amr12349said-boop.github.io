@@ -1,11 +1,12 @@
-const CACHE = "mora3-v4";
+const CACHE = "mora3-v5";
 const CORE = [
   "./",
   "./index.html",
   "./manifest.json",
   "./photo.jpg",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./apple-touch-icon.png"
 ];
 
 self.addEventListener("install", e => {

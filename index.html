@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="أهم 500 كلمة مع MORA" />
 <link rel="manifest" href="manifest.json" />
-<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <link rel="canonical" href="https://amr12349said-boop.github.io/" />
 <title>أهم 500 كلمة مع MORA</title>
@@ -1897,7 +1897,38 @@
     font-size: .85rem;
     cursor: pointer;
   }
-  .user-drop button:hover { background: var(--line); }
+.user-drop button:hover { background: var(--line); }
+  .install-bar {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 92vw;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 8px 30px rgba(35, 27, 63, .18);
+    font-size: .82rem;
+    direction: rtl;
+  }
+  .install-txt { line-height: 1.5; }
+  .install-txt b { color: var(--primary); }
+  .install-txt span { color: var(--muted); }
+  .install-x {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .install-x:hover { color: var(--ink); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1906,6 +1937,14 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7579059925806406" crossorigin="anonymous"></script>
 </head>
 <body>
+
+<div class="install-bar" id="installBar" hidden>
+  <div class="install-txt">
+    📲 <b>ثبّت MORA على جهازك</b><br>
+    <span>اضغط زر المشاركة <b>Share</b> ← <b>إضافة إلى الشاشة الرئيسية</b> ← <b>إضافة</b></span>
+  </div>
+  <button class="install-x" id="installClose" title="إغلاق">✕</button>
+</div>
 
 <div class="welcome" id="welcome">
   <div class="blob b1"></div>
@@ -4156,6 +4195,25 @@ localStorage.removeItem("moraDev");
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
+
+  (function installBanner() {
+    try {
+      const ua = navigator.userAgent;
+      const isIOS = /iphone|ipad|ipod/i.test(ua);
+      const standalone = window.navigator.standalone === true ||
+        window.matchMedia("(display-mode: standalone)").matches;
+      const dismissed = localStorage.getItem("moraInstallDismissed") === "1";
+      const bar = document.getElementById("installBar");
+      if (!bar) return;
+      if (isIOS && !standalone && !dismissed) {
+        bar.hidden = false;
+        document.getElementById("installClose").addEventListener("click", () => {
+          bar.hidden = true;
+          localStorage.setItem("moraInstallDismissed", "1");
+        });
+      }
+    } catch (e) {}
+  })();
 </script>
 
 </body>
