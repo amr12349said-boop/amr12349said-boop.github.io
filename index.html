@@ -504,9 +504,16 @@
     gap: 7px;
     position: relative;
     overflow: hidden;
-    animation: cardIn .5s ease both;
+animation: cardIn .5s ease both;
     animation-delay: calc(var(--i) * 45ms);
     transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  }
+  .card.removing {
+    animation: cardOut .22s ease both;
+    pointer-events: none;
+  }
+  @keyframes cardOut {
+    to { opacity: 0; transform: scale(.85); }
   }
 
   @keyframes cardIn {
@@ -2631,7 +2638,16 @@
         updateReviewBadge();
         card.querySelector(".learned-btn").textContent = learned.has(w.en) ? "✅ حفظتها" : "لم أحفظها بعد";
         card.querySelector(".learned-btn").classList.toggle("checked", learned.has(w.en));
-        filterCards();
+        const hide = learnedFilter === "learned" ? !learned.has(w.en) : learnedFilter === "notlearned" ? learned.has(w.en) : false;
+        if (hide) {
+          card.classList.add("removing");
+          setTimeout(() => {
+            if (card.parentNode) card.remove();
+            countEl.textContent = `${grid.children.length} / ${activeWords().length} كلمة`;
+          }, 220);
+        } else {
+          countEl.textContent = `${grid.children.length} / ${activeWords().length} كلمة`;
+        }
       });
       card.addEventListener("click", e => {
         if (!studyMode) return;
